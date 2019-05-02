@@ -1,20 +1,17 @@
 #pragma once
 
-class Ball {
+class Ball{
+    public:
+        Ball();
+        ~Ball();
+        void setCoordinates(double, double);
+        double getBallX();
+        double getBallY();
+        void printBallInfo();
+        bool isActive();
 
-public:
-    Ball();
-    ~Ball();
-    void setBallPosition(float coordX, float coordY);
-    float getBallX();
-    float getBallY();
-    bool Ball::isActive();
+    private:
+        bool active;
+        double coordX, coordY;
 
-
-protected:
-
-private:
-    float coordX;
-    float coordY;
-    bool active;
 };
