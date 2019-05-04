@@ -20,7 +20,7 @@ class coord{
 }
 
 
-// Filters to use in 
+// Filters to use 
 class Filters{
 
 
@@ -41,34 +41,43 @@ class Filters{
 	}
 	
 	
-	void lossFilter(Robot &newCoord){
+	Ball noiseFilter(Ball newCoord){
 	
-		static Robot oldPos = newCoord;
-		if(newCoord.coordX==oldCoord.coordX&&newCoord.coordY==oldCoord.coordY){
+		static double initTimeB = millis();
+		static Ball filtCoordB = newCoord;
 		
-			delete newCoord;
+		if(millis() - initTime > 500){
 		
-		
+			initTime = millis();
+			filtCoord = newCoord;
 		}
 		
-	
-		
-		
-		
-	
-	
+
+		return filtCoordB;
 	
 	}
 	
 	
 	
+	void lossFilter(void){
 	
+		static double iniTime = millis();
+		static double filterTime=200;
+	
+		bool ret = millis()-iniTime>=200;
+		if(ret){
+		
+			iniTime=millis();
+		
+		}
+		
+		return ret;
+	
+	
+	}
 
-
+	
 }
-
-
-//Noise Filter
 
 
 
@@ -77,11 +86,6 @@ class Filters{
 
 
 /* ball methods */
-
-
-
-
-
 Ball::Ball(){
     this->active = true;
     this->coordX = 0;
@@ -179,13 +183,23 @@ bool Robot::getTeam(){
 void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vector<Robot> &robosAmarelos){
     uint8_t qt_robosAzuis = detection.robots_blue_size();
     uint8_t qt_robosAmarelos = detection.robots_yellow_size();
+    
+    
+    static vector<Filters> filteredRobsAz(qt_robosAzuis,FiltersRobots());
+    static vector<Filters> filteredRobsAm(qt_robosAmarelos,FiltersRobots());
+    
     for(uint8_t x = 0; x < qt_robosAzuis; x++){
+    
+    
+    	robosAzuis[x] = filteredRobsAz[x].noiseFilter(robosAzuis[x]);
         robosAzuis[x].setHeight(detection.robots_blue(x).height());
         robosAzuis[x].setCoordinates(detection.robots_blue(x).x(), detection.robots_blue(x).y());
         robosAzuis[x].setAngle(detection.robots_blue(x).orientation());
         robosAzuis[x].printRobotInfo();
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
+    
+    	robosAmarelos[x] = filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
