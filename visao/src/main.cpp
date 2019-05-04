@@ -31,9 +31,9 @@ class Filters{
 		}
 		
 	}
-	/*
 	
-	Ball noiseFilter(Ball newCoord){
+	
+	void noiseFilter(Ball &newCoord){
 	
 		static double initTimeB = clock();
 		static Ball filtCoordB = newCoord;
@@ -43,13 +43,10 @@ class Filters{
 			initTimeB = clock();
 			filtCoordB = newCoord;
 		}
-		
 
-		return filtCoordB;
-	
 	}
 	
-	
+	/*
 	
 	bool lossFilter(void){
 	
@@ -201,7 +198,9 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
 
 void setBallInfo(SSL_DetectionFrame &detection, Ball &ball){
     if(detection.balls_size() > 0){
+        static Filters filteredBall;
         ball.setCoordinates(detection.balls(0).x(), detection.balls(0).y());
+        filteredBall.noiseFilter(ball);
         ball.printBallInfo();
     }
 }
