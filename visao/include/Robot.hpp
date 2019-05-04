@@ -9,6 +9,7 @@ class Robot{
         void setCoordinates(double, double);
         void setAngle(double);
         void setHeight(double);
+        void setId(uint8_t);
         double getRobotX();
         double getRobotY();
         double getHeight();

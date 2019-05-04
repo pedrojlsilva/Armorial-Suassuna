@@ -70,7 +70,9 @@ class Filters{
 
 
 
-
+// globais
+vector<Robot> robosAzuis;
+vector<Robot> robosAmarelos;
 
 
 
@@ -135,6 +137,10 @@ void Robot::setCoordinates(double coordX, double coordY){
     this->coordY = coordY;
 }
 
+void Robot::setId(uint8_t id){
+    this->robot_id = id;
+}
+
 void Robot::setAngle(double angle){
     this->angle = angle;
 }
@@ -179,7 +185,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
     filteredRobsAm = (Filters *) malloc(qt_robosAmarelos * sizeof(Filters));
     
     for(uint8_t x = 0; x < qt_robosAzuis; x++){
-    
+        robosAzuis[x].setId(detection.robots(x).robot_id());
         robosAzuis[x].setHeight(detection.robots_blue(x).height());
         robosAzuis[x].setCoordinates(detection.robots_blue(x).x(), detection.robots_blue(x).y());
         robosAzuis[x].setAngle(detection.robots_blue(x).orientation());
@@ -187,7 +193,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robosAzuis[x].printRobotInfo();
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
-    
+        robosAmarelos[x].setId(detection.robots(x).robot_id());
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
