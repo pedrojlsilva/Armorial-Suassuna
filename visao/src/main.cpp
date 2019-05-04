@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <bits/stdc++.h>
 #include "robocup_ssl_client.h"
 #include "timer.h"
 
@@ -11,27 +11,22 @@
 
 #define qt_robosTime 8
 // Robot and Ball coordinates
-
-class coord{
-
-	double x;
-	double y
-
-}
-
+using namespace std;
+using namespace chrono;
 
 // Filters to use 
 class Filters{
 
 
-	Robot noiseFilter(Robot newCoord){
+	public:
+    Robot noiseFilter(Robot newCoord){
 	
-		static double initTime = millis();
+		static double initTime = clock();
 		static Robot filtCoord = newCoord;
 		
-		if(millis() - initTime > 500){
+		if(clock() - initTime > 500){
 		
-			initTime = millis();
+			initTime = clock();
 			filtCoord = newCoord;
 		}
 		
@@ -39,17 +34,17 @@ class Filters{
 		return filtCoord;
 	
 	}
-	
+	/*
 	
 	Ball noiseFilter(Ball newCoord){
 	
-		static double initTimeB = millis();
+		static double initTimeB = clock();
 		static Ball filtCoordB = newCoord;
 		
-		if(millis() - initTime > 500){
+		if(clock() - initTimeB > 500){
 		
-			initTime = millis();
-			filtCoord = newCoord;
+			initTimeB = clock();
+			filtCoordB = newCoord;
 		}
 		
 
@@ -59,15 +54,15 @@ class Filters{
 	
 	
 	
-	void lossFilter(void){
+	bool lossFilter(void){
 	
-		static double iniTime = millis();
+		static double iniTime = clock();
 		static double filterTime=200;
 	
-		bool ret = millis()-iniTime>=200;
+		bool ret = clock()-iniTime>=200;
 		if(ret){
 		
-			iniTime=millis();
+			iniTime=clock();
 		
 		}
 		
@@ -75,9 +70,9 @@ class Filters{
 	
 	
 	}
-
-	
-}
+*/
+	/*blablalbalblaa*/
+};
 
 
 
@@ -112,7 +107,7 @@ double Ball::getBallY(){
 }
 
 void Ball::printBallInfo(){
-    printf("Bola\tPosicao: <%9.2lf, %9.2lf>\n", abs(this->getBallX()), abs(this->getBallY()));
+    printf("Bola\tPosicao: <%9.2lf, %9.2lf>\n", this->getBallX(), this->getBallY());
 }
 
 bool Ball::isActive(){
@@ -137,8 +132,8 @@ void Robot::printRobotInfo(){
     else printf("Blue Robot |");
 
     printf("ID: %d\t", this->robot_id);
-    printf("Altura: %6.2lf | Posicao: <%9.2lf,%9.2lf |", abs(this->getHeight()), abs(this->getRobotX()), abs(this->getRobotY()));
-    printf("Angulo: %6.2lf |\n", abs(this->getAngle()));
+    printf("Altura: %6.2lf | Posicao: <%9.2lf,%9.2lf |", this->getHeight(), this->getRobotX(), this->getRobotY());
+    printf("Angulo: %6.2lf |\n", this->getAngle());
 }
 
 void Robot::setCoordinates(double coordX, double coordY){
@@ -185,24 +180,23 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
     uint8_t qt_robosAmarelos = detection.robots_yellow_size();
     
     
-    static vector<Filters> filteredRobsAz(qt_robosAzuis,FiltersRobots());
-    static vector<Filters> filteredRobsAm(qt_robosAmarelos,FiltersRobots());
+    static vector<Filters> filteredRobsAz(qt_robosAzuis,Filters());
+    static vector<Filters> filteredRobsAm(qt_robosAmarelos,Filters());
     
     for(uint8_t x = 0; x < qt_robosAzuis; x++){
     
-    
-    	robosAzuis[x] = filteredRobsAz[x].noiseFilter(robosAzuis[x]);
         robosAzuis[x].setHeight(detection.robots_blue(x).height());
         robosAzuis[x].setCoordinates(detection.robots_blue(x).x(), detection.robots_blue(x).y());
         robosAzuis[x].setAngle(detection.robots_blue(x).orientation());
+        robosAzuis[x] = filteredRobsAz[x].noiseFilter(robosAzuis[x]);
         robosAzuis[x].printRobotInfo();
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
     
-    	robosAmarelos[x] = filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
+        robosAmarelos[x] = filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
         robosAmarelos[x].printRobotInfo();
     }
 }
