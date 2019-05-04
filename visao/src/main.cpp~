@@ -41,18 +41,16 @@ class Filters{
 	}
 	
 	
-	void lossFilter(void){
+	void lossFilter(Robot &newCoord){
 	
-		static double iniTime = millis();
-		static double filterTime=200;
-	
-		bool ret = millis()-iniTime>=200;
-		if(ret){
-			iniTime=millis();
+		static Robot oldPos = newCoord;
+		if(newCoord.coordX==oldCoord.coordX&&newCoord.coordY==oldCoord.coordY){
+		
+			delete newCoord;
+		
+		
 		}
 		
-		return ret;
-	
 	
 		
 		
