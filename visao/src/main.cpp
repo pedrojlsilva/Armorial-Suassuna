@@ -19,7 +19,7 @@ class Filters{
 
 
 	public:
-    Robot noiseFilter(Robot newCoord){
+    void noiseFilter(Robot &newCoord){
 	
 		static double initTime = clock();
 		static Robot filtCoord = newCoord;
@@ -30,9 +30,6 @@ class Filters{
 			filtCoord = newCoord;
 		}
 		
-
-		return filtCoord;
-	
 	}
 	/*
 	
@@ -179,16 +176,17 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
     uint8_t qt_robosAzuis = detection.robots_blue_size();
     uint8_t qt_robosAmarelos = detection.robots_yellow_size();
     
-    
-    static vector<Filters> filteredRobsAz(qt_robosAzuis,Filters());
-    static vector<Filters> filteredRobsAm(qt_robosAmarelos,Filters());
+    static Filters *filteredRobsAz;
+    filteredRobsAz = (Filters *) malloc(qt_robosAzuis * sizeof(Filters));
+    static Filters *filteredRobsAm;
+    filteredRobsAm = (Filters *) malloc(qt_robosAmarelos * sizeof(Filters));
     
     for(uint8_t x = 0; x < qt_robosAzuis; x++){
     
         robosAzuis[x].setHeight(detection.robots_blue(x).height());
         robosAzuis[x].setCoordinates(detection.robots_blue(x).x(), detection.robots_blue(x).y());
         robosAzuis[x].setAngle(detection.robots_blue(x).orientation());
-        robosAzuis[x] = filteredRobsAz[x].noiseFilter(robosAzuis[x]);
+        filteredRobsAz[x].noiseFilter(robosAzuis[x]);
         robosAzuis[x].printRobotInfo();
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
@@ -196,7 +194,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
-        robosAmarelos[x] = filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
+        filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
         robosAmarelos[x].printRobotInfo();
     }
 }
