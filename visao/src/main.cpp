@@ -11,6 +11,7 @@
 #include "Filters.hpp"
 
 #define qt_robosTime 8
+#define tempoFiltro 500
 using namespace std;
 using namespace chrono;
 
@@ -28,7 +29,9 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robosAzuis[x].setHeight(detection.robots_blue(x).height());
         robosAzuis[x].setCoordinates(detection.robots_blue(x).x(), detection.robots_blue(x).y());
         robosAzuis[x].setAngle(detection.robots_blue(x).orientation());
+        filteredRobsAz[x].setFilterTime(tempoFiltro);
         filteredRobsAz[x].noiseFilter(robosAzuis[x]);
+        filteredRobsAz[x].lossFilter(robosAzuis[x]);
         robosAzuis[x].printRobotInfo();
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
@@ -36,7 +39,9 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
+        filteredRobsAm[x].setFilterTime(tempoFiltro);
         filteredRobsAm[x].noiseFilter(robosAmarelos[x]);
+        filteredRobsAm[x].lossFilter(robosAmarelos[x]);
         robosAmarelos[x].printRobotInfo();
     }
 }
@@ -45,7 +50,9 @@ void setBallInfo(SSL_DetectionFrame &detection, Ball &ball){
     if(detection.balls_size() > 0){
         static Filters filteredBall;
         ball.setCoordinates(detection.balls(0).x(), detection.balls(0).y());
+        filteredBall.setFilterTime(tempoFiltro);
         filteredBall.noiseFilter(ball);
+        filteredBall.lossFilter(ball);
         ball.printBallInfo();
     }
 }
@@ -61,7 +68,6 @@ int main(){
         robosAmarelos.push_back(roboAmarelo);
     }
     Ball *ball = new Ball();
-
 
     RoboCupSSLClient client;
     client.open(true);
