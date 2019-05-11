@@ -10,7 +10,6 @@ input:
 1.covMatrix: matriz de previsao de covariancias;
 2.meanMatrix: matriz das medias de posicao e velocidade; 
 3.noisePar: parametros do filtro de ruido;
-
 A cada iteracao, a prediction part vai usar como input, o output do update part
 
 updatePV = funcao que atualiza posicao p e velocidade v;

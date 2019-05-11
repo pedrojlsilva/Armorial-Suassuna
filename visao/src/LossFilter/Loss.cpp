@@ -1,4 +1,5 @@
 /* loss filter methods */
+#include "Loss.hpp"
 
 bool Loss::lossRobotFilter(Robot &newCoord){
 	static double iniTime = clock();

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef loss
+#define LOSS_H
+
 
 class Loss{
     public:
@@ -6,3 +8,5 @@ class Loss{
     bool lossBallFilter(Ball &newCoord);
 
 };
+
+#endif
