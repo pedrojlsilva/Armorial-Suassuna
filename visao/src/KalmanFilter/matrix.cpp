@@ -41,5 +41,27 @@ void Matrix::init(){
     for(unsigned i = 0; i < _lines; i++){
         for(unsigned j = 0; j < _columns; j++){
             _matrix[i][j]=0;
+        }
     }
+} //end init()
+
+void Matrix::setSize(unsigned lines, unsigned columns){
+    deallocMat();
+    _lines = lines;
+    _columns = columns;
+    allocMat();
+    init();
+
+}//end setSize()
+
+float Matrix::getInfo(unsigned line, unsigned column){
+    assert(line < _lines && column < _columns);
+    return _matrix[line][column];
+
+}
+
+void Matrix::setInfo(unsigned line, unsigned column, float value){
+    assert(line < _lines && column < _columns);
+    _matrix[line][column]=value;
+
 }

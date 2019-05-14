@@ -5,8 +5,8 @@
 #include <iostream>
 #include <assert.h>
 
-class Matrix {
-
+class Matrix{
+    
 
 private:
     unsigned _lines;
@@ -18,9 +18,24 @@ private:
     void init();
 
 public:
+    //Constructors and Destructors 
     Matrix(unsigned lines, unsigned columns);
     ~Matrix();
-    
+
+
+    //Basics Functions
+    void setSize(unsigned lines, unsigned columns);
+    float getInfo(unsigned line, unsigned column);
+    void setInfo(unsigned line, unsigned column, float value);
+    //escrever função que retorna _lines e _columns
+
+
+    // Mat functions 
+    Matrix transposed() const;
+    Matrix diag(unsigned size, float diagValue);
+
+    void copyFrom(const Matrix &M);
+    void print();
 
 };
 
