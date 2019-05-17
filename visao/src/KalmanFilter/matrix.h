@@ -1,3 +1,5 @@
+//#include <Eigen/Dense> olhar essa bib, pq tem funções para o uso de matrizes
+
 #ifndef matrix
 
 #define MATRIX_H
