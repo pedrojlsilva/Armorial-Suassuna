@@ -16,6 +16,8 @@ private:
     void allocMat();
     void deallocMat();
     void init();
+    _matrix transpose();
+    _matrix identityMatix();
 
 public:
     Matrix(unsigned lines, unsigned columns);
