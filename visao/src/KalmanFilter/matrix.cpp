@@ -42,4 +42,21 @@ void Matrix::init(){
         for(unsigned j = 0; j < _columns; j++){
             _matrix[i][j]=0;
     }
-}
+} 
+
+void Matrix::transpose(){
+    static Matrix(3,4) **aux;
+    int tamanho  = _lines * _columns;
+    *aux = (Matrix **) malloc( tamanho * sizeof(Matrix));
+
+    if(_lines != 0 && _columns != 0){
+        for(unsigned i = 0; i < _lines; i++){
+            for(unsigned j = 0; j < _columns; j++){
+                **aux[j][i] = **matrix[i][j];
+            }
+        }
+    }
+
+    return **aux; 
+}    
+   
