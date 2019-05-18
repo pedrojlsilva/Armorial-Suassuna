@@ -65,3 +65,41 @@ void Matrix::setInfo(unsigned line, unsigned column, float value){
     _matrix[line][column]=value;
 
 }
+
+
+
+Matrix Matrix::transposed() const{
+    Matrix matTemp(_columns, _lines);
+    for(int i=0; i<_lines; i++){
+        for(int j=0; j<_columns; j++){
+            matTemp.setInfo(j, i, _matrix[i][j]);
+        }
+    }
+    return matTemp;
+}
+
+
+Matrix Matrix::diag(unsigned size, float diagValue){
+    Matrix  mat(size, size);
+    for(int i=0; i < size; i++){
+        mat.setInfo(i,i, diagValue);
+    }
+    return mat;
+
+}
+
+Matrix Matrix::identity(unsigned size){
+    return diag(size, 1);
+
+}
+
+void Matrix::copyFrom(const Matrix &M){
+    assert(_lines==M.lines() && _columns == M.columns());
+    for(int i=0; i<_lines; i++){
+        for(int j=0; j<_columns; j++){
+            _matrix[i][j] = M.getInfo(i, j);
+        }
+    }
+
+    
+}

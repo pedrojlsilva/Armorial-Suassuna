@@ -33,7 +33,9 @@ public:
     // Mat functions 
     Matrix transposed() const;
     Matrix diag(unsigned size, float diagValue);
-
+    Matrix identity(unsigned size);
+    unsigned lines()const{ return _lines; }
+    unsigned columns() const { return _lines; }
     void copyFrom(const Matrix &M);
     void print();
 
