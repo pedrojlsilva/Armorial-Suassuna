@@ -103,3 +103,39 @@ void Matrix::copyFrom(const Matrix &M){
 
     
 }
+} 
+
+_matrix Matrix::transpose(){
+    static Matrix(3,4) **aux;
+    int tamanho  = _lines * _columns;
+    *aux = (Matrix **) malloc( tamanho * sizeof(Matrix));
+
+    if(_lines != 0 && _columns != 0){
+        for(unsigned i = 0; i < _lines; i++){
+            for(unsigned j = 0; j < _columns; j++){
+                aux[j][i] = matrix[i][j];
+            }
+        }
+    }
+
+    return **aux; 
+}    
+    
+_matrix Matrix::identityMatrix(){
+
+    if(_lines != 0 && _columns != 0){
+    
+        for(unsigned i = 0; i < _lines; i++){
+            for(unsigned j = 0; j < _columns; j++){
+                if(i == j){
+                    _matrix[i][j] = 1;
+                }else{
+                    _matrix[i][j] = 0;
+
+                }
+            }
+        }
+    }
+
+    return _matrix; 
+}   
