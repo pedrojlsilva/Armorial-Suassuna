@@ -1,141 +1,205 @@
+
 #include "matrix.h"
 
 Matrix::Matrix(unsigned lines, unsigned columns) {
-
     _lines = lines;
     _columns = columns;
+
+    // Create matrix
     _matrix = NULL;
+    allocate();
+    initialize();
+}
 
-    allocMat();
-    init();
+Matrix::Matrix(const Matrix &M) {
+    _lines = M.lines();
+    _columns = M.columns();
 
+    // Create matrix by copy
+    _matrix = NULL;
+    allocate();
+    copyFrom(M);
 }
 
 Matrix::~Matrix() {
-    deallocMat();
-
+    deallocate();
 }
 
-void Matrix::allocMat(){
-    if(_lines != 0 && _columns != 0){
+void Matrix::allocate() {
+    if(_lines!=0 && _columns!=0) {
         _matrix = new float*[_lines];
-        for(unsigned i = 0; i < _lines; i++){
+        for(unsigned i=0; i<_lines; i++)
             _matrix[i] = new float[_columns];
-        }
     }
 }
 
-void Matrix::deallocMat(){
-    if(_matrix != NULL){
-        for(unsigned i = 0; i < _lines; i++){
+void Matrix::deallocate() {
+    if(_matrix!=NULL) {
+        for(unsigned i=0; i<_lines; i++)
             delete[] _matrix[i];
-        }
-        delete[] _matrix; //The delete [] operator deallocates memory and calls destructors for an array of objects created with new [].
-        _matrix=NULL;
+        delete[] _matrix;
+        _matrix = NULL;
     }
-    
 }
 
+void Matrix::initialize() {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] = 0;
+}
 
-void Matrix::init(){
-    for(unsigned i = 0; i < _lines; i++){
-        for(unsigned j = 0; j < _columns; j++){
-            _matrix[i][j]=0;
-        }
-    }
-} //end init()
+void Matrix::setSize(unsigned lines, unsigned columns) {
+    deallocate();
 
-void Matrix::setSize(unsigned lines, unsigned columns){
-    deallocMat();
     _lines = lines;
     _columns = columns;
-    allocMat();
-    init();
+    allocate();
 
-}//end setSize()
-
-float Matrix::getInfo(unsigned line, unsigned column){
-    assert(line < _lines && column < _columns);
-    return _matrix[line][column];
-
+    initialize();
 }
 
-void Matrix::setInfo(unsigned line, unsigned column, float value){
-    assert(line < _lines && column < _columns);
-    _matrix[line][column]=value;
+float Matrix::get(unsigned i, unsigned j) const {
+    assert(i<_lines && j<_columns);
 
+    return _matrix[i][j];
 }
 
+void Matrix::set(unsigned i, unsigned j, float value) {
+    assert(i<_lines && j<_columns);
 
+    _matrix[i][j] = value;
+}
 
-Matrix Matrix::transposed() const{
-    Matrix matTemp(_columns, _lines);
-    for(int i=0; i<_lines; i++){
-        for(int j=0; j<_columns; j++){
-            matTemp.setInfo(j, i, _matrix[i][j]);
-        }
+void Matrix::copyFrom(const Matrix &M) {
+    assert(_lines==M.lines() && _columns==M.columns());
+
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] = M.get(i, j);
+}
+
+void Matrix::print() {
+    for(unsigned i=0; i<_lines; i++) {
+        for(unsigned j=0; j<_columns; j++)
+            std::cout << _matrix[i][j] << " ";
+        std::cout << "\n";
     }
-    return matTemp;
 }
 
-
-Matrix Matrix::diag(unsigned size, float diagValue){
-    Matrix  mat(size, size);
-    for(int i=0; i < size; i++){
-        mat.setInfo(i,i, diagValue);
-    }
-    return mat;
-
-}
-
-Matrix Matrix::identity(unsigned size){
+Matrix Matrix::identity(unsigned size) {
     return diag(size, 1);
-
 }
 
-void Matrix::copyFrom(const Matrix &M){
-    assert(_lines==M.lines() && _columns == M.columns());
-    for(int i=0; i<_lines; i++){
-        for(int j=0; j<_columns; j++){
-            _matrix[i][j] = M.getInfo(i, j);
-        }
-    }
-
-    
+Matrix Matrix::diag(unsigned size, float diagValue) {
+    Matrix M(size, size);
+    for(unsigned i=0; i<size; i++)
+        M.set(i, i, diagValue);
+    return M;
 }
-} 
 
-_matrix Matrix::transpose(){
-    static Matrix(3,4) **aux;
-    int tamanho  = _lines * _columns;
-    *aux = (Matrix **) malloc( tamanho * sizeof(Matrix));
+Matrix Matrix::transposed() const {
+    Matrix temp(_columns, _lines);
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            temp.set(j, i, _matrix[i][j]);
+    return temp;
+}
 
-    if(_lines != 0 && _columns != 0){
-        for(unsigned i = 0; i < _lines; i++){
-            for(unsigned j = 0; j < _columns; j++){
-                aux[j][i] = matrix[i][j];
-            }
+void Matrix::operator=(const Matrix &M) {
+    deallocate();
+
+    _lines = M._lines;
+    _columns = M._columns;
+    allocate();
+
+    copyFrom(M);
+}
+
+Matrix Matrix::operator+(const Matrix &M) const {
+    assert(_lines==M.lines() && _columns==M.columns());
+
+    Matrix temp(_lines, _columns);
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            temp.set(i, j, _matrix[i][j]+M.get(i,j));
+
+    return temp;
+}
+
+Matrix Matrix::operator-(const Matrix &M) const {
+    assert(_lines==M.lines() && _columns==M.columns());
+
+    Matrix temp(_lines, _columns);
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            temp.set(i, j, _matrix[i][j]-M.get(i,j));
+
+    return temp;
+}
+
+Matrix Matrix::operator+(float k) const {
+    Matrix temp(_lines, _columns);
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            temp.set(i, j, _matrix[i][j]+k);
+
+    return temp;
+}
+
+Matrix Matrix::operator-(float k) const {
+    return (*this)+(-k);
+}
+
+Matrix Matrix::operator*(const Matrix &M) const {
+    assert(_columns==M.lines());
+
+    Matrix temp(_lines, M.columns());
+    for(unsigned i=0; i<_lines; i++) {
+        for(unsigned j=0; j<M.columns();j++) {
+            temp.set(i, j, 0);
+            for(unsigned k=0;k<M.lines();k++)
+                temp.set(i, j, temp.get(i,j)+_matrix[i][k]*M.get(k,j));
         }
     }
 
-    return **aux; 
-}    
-    
-_matrix Matrix::identityMatrix(){
+    return temp;
+}
 
-    if(_lines != 0 && _columns != 0){
-    
-        for(unsigned i = 0; i < _lines; i++){
-            for(unsigned j = 0; j < _columns; j++){
-                if(i == j){
-                    _matrix[i][j] = 1;
-                }else{
-                    _matrix[i][j] = 0;
+Matrix Matrix::operator*(float k) const {
+    Matrix temp(_lines, _columns);
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            temp.set(i, j, _matrix[i][j]*k);
 
-                }
-            }
-        }
-    }
+    return temp;
+}
 
-    return _matrix; 
-}   
+void Matrix::operator+=(const Matrix &M) {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] += M.get(i,j);
+}
+
+void Matrix::operator+=(float k) {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] += k;
+}
+
+void Matrix::operator-=(const Matrix &M) {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] -= M.get(i,j);
+}
+
+void Matrix::operator-=(float k) {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] -= k;
+}
+
+void Matrix::operator*=(float k) {
+    for(unsigned i=0; i<_lines; i++)
+        for(unsigned j=0; j<_columns; j++)
+            _matrix[i][j] *= k;
+}

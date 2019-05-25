@@ -1,48 +1,103 @@
-//#include <Eigen/Dense> olhar essa bib, pq tem funções para o uso de matrizes
-
-#ifndef matrix
-
+#ifndef MATRIX_H
 #define MATRIX_H
 
+
 #include <iostream>
+
 #include <assert.h>
 
-class Matrix{
-    
+class Matrix {
 
 private:
+
     unsigned _lines;
+
     unsigned _columns;
 
     float **_matrix;
-    void allocMat();
-    void deallocMat();
-    void init();
-    _matrix transpose();
-    _matrix identityMatix();
+
+    void allocate();
+
+    void deallocate();
+
+    void initialize();
 
 public:
-    //Constructors and Destructors 
-    Matrix(unsigned lines, unsigned columns);
+
+    Matrix(unsigned lines=0, unsigned columns=0);
+
+
+
+    Matrix(const Matrix &M);
+
+
+
     ~Matrix();
 
+    // Basics
 
-    //Basics Functions
+
+
     void setSize(unsigned lines, unsigned columns);
-    float getInfo(unsigned line, unsigned column);
-    void setInfo(unsigned line, unsigned column, float value);
-    //escrever função que retorna _lines e _columns
 
 
-    // Mat functions 
+
+    unsigned lines() const { return _lines; }
+
+    unsigned columns() const { return _columns; }
+
+    float get(unsigned i, unsigned j) const;
+
+    void set(unsigned i, unsigned j, float value);
+
+    // Matrix functions
+
     Matrix transposed() const;
-    Matrix diag(unsigned size, float diagValue);
-    Matrix identity(unsigned size);
-    unsigned lines()const{ return _lines; }
-    unsigned columns() const { return _lines; }
+
+    // Matrix generation
+
+    static Matrix identity(unsigned size);
+
+    static Matrix diag(unsigned size, float diagValue);
+
+    // Auxiliary functions
+
     void copyFrom(const Matrix &M);
+
     void print();
+
+    // Operators
+
+    void operator=(const Matrix &M);
+
+    Matrix operator+(const Matrix &M) const;
+
+    Matrix operator+(float k) const;
+
+    Matrix operator-(const Matrix &M) const;
+
+    Matrix operator-(float k) const;
+
+    Matrix operator*(const Matrix &M) const;
+
+    Matrix operator*(float k) const;
+
+    void operator+=(const Matrix &M);
+
+    void operator+=(float k);
+
+    void operator-=(const Matrix &M);
+
+    void operator-=(float k);
+
+
+
+    void operator*=(float k);
+
+
 
 };
 
-#endif
+
+
+#endif // MATRIX_H
