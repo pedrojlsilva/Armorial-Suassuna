@@ -18,7 +18,7 @@
 #define PORT 8881
 #define IP "127.0.0.1"
 #define qt_robosTime 8
-#define tempoFiltro 500
+#define tempoFiltro 200
 #define maxRobots 8
 using namespace std;
 using namespace chrono;
@@ -110,10 +110,13 @@ vector<KalmanFilter> kFiltersYB;
 
 vector<KalmanFilter> kFiltersXY;
 vector<KalmanFilter> kFiltersYY;
+KalmanFilter filterBallX;
+KalmanFilter filterBallY;
+
 
 bool firstKalmanInputB[maxRobots] = {false};
 bool firstKalmanInputY[maxRobots] = {false};
-
+bool firstKalmanBall = false;
 
 void initializeKalman(){
     double dt = 1.0/30; // Time step
@@ -147,6 +150,9 @@ void initializeKalman(){
         kFiltersXY.push_back(KalmanFilter(dt,A, C, Q, R, P));
         kFiltersYY.push_back(KalmanFilter(dt,A, C, Q, R, P));
     }
+
+    filterBallX = KalmanFilter(dt, A, C, Q, R, P);
+    filterBallY = KalmanFilter(dt, A, C, Q, R, P);
 
 }
 
@@ -244,8 +250,8 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robot_aux_coord.x = kFiltersXB[robosAzuis[x].robot_id].state().transpose()(0);
         robot_aux_coord.y = kFiltersYB[robosAzuis[x].robot_id].state().transpose()(0);
         //robosAzuis[x].printRobotInfo();
-        cout << "chegou: " << detection.robots_blue(x).x() << " " << detection.robots_blue(x).y() << endl;
-        cout << robot_aux_coord.x << " " << robot_aux_coord.y << endl;
+        //cout << "chegou: " << detection.robots_blue(x).x() << " " << detection.robots_blue(x).y() << endl;
+        //cout << robot_aux_coord.x << " " << robot_aux_coord.y << endl;
         (*robotsInfo).robots_blue[x] = robot_aux_coord;
     }
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
@@ -253,12 +259,28 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &robosAzuis, vec
         robosAmarelos[x].setHeight(detection.robots_yellow(x).height());
         robosAmarelos[x].setCoordinates(detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         robosAmarelos[x].setAngle(detection.robots_yellow(x).orientation());
+        robot_aux_coord.id = robosAmarelos[x].robot_id;
+        robot_aux_coord.angle = robosAmarelos[x].getAngle();
         noiseYellowRobots[x].noiseRobotFilter(robosAmarelos[x]);
         lossYellowRobots[x].lossRobotFilter(robosAmarelos[x]);
-        robot_aux_coord.id = robosAmarelos[x].robot_id;
-        robot_aux_coord.x = robosAmarelos[x].getRobotX();
-        robot_aux_coord.y = robosAmarelos[x].getRobotY();
-        robot_aux_coord.angle = robosAmarelos[x].getAngle();
+        if(firstKalmanInputY[robosAmarelos[x].robot_id] == false){
+            firstKalmanInputY[robosAmarelos[x].robot_id] = true;
+            Eigen::VectorXd x0(3);
+            x0 << robosAmarelos[x].getRobotX(),0,0;
+            kFiltersXY[robosAmarelos[x].robot_id].init(0,x0);
+            Eigen::VectorXd x1(3);
+            x1 << robosAmarelos[x].getRobotY(),0,0;
+            kFiltersYY[robosAmarelos[x].robot_id].init(0,x1);
+        }else{
+            Eigen::VectorXd zz(1);
+            zz << robosAmarelos[x].getRobotX();
+            kFiltersXY[robosAmarelos[x].robot_id].update(zz);
+            Eigen::VectorXd zy(1);
+            zy << robosAmarelos[x].getRobotY();
+            kFiltersYY[robosAmarelos[x].robot_id].update(zy);
+        }
+        robot_aux_coord.x = kFiltersXY[robosAmarelos[x].robot_id].state().transpose()(0);
+        robot_aux_coord.y = kFiltersYY[robosAmarelos[x].robot_id].state().transpose()(0);
         (*robotsInfo).robots_yellow[x] = robot_aux_coord;
         //robosAmarelos[x].printRobotInfo();
     }
@@ -271,8 +293,24 @@ void setBallInfo(SSL_DetectionFrame &detection, Ball &ball, pacote *robotsInfo){
         ball.setCoordinates(detection.balls(0).x(), detection.balls(0).y());
         noiseBall.noiseBallFilter(ball);
         lossBall.lossBallFilter(ball);
+        if(firstKalmanBall == false){
+            firstKalmanBall = true;
+            Eigen::VectorXd x0(3);
+            x0 << ball.getBallX(),0,0;
+            filterBallX.init(0,x0);
+            Eigen::VectorXd x1(3);
+            x1 << ball.getBallY(),0,0;
+            filterBallY.init(0,x1);
+        }else{
+            Eigen::VectorXd zz(1);
+            zz << ball.getBallX();
+            filterBallX.update(zz);
+            Eigen::VectorXd zy(1);
+            zy << ball.getBallY();
+            filterBallY.update(zy);
+        }
         (*robotsInfo).ball = make_pair(ball.getBallX(), ball.getBallY());
-        //ball.printBallInfo();
+        ball.printBallInfo();
     }
 }
 
