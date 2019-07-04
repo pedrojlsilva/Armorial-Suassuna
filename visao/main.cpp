@@ -20,6 +20,7 @@
 
 #define printarInfoRobos false
 #define printarInfoBola false
+#define bateriasRandomicas true
 
 using namespace std;
 using namespace chrono;
@@ -359,27 +360,32 @@ void setBallInfo(SSL_DetectionFrame &detection, Ball &ball, pacote *robotsInfo){
     }
 }
 
-int main(){
+void gerarBaterias(pacote *robotsInfo){
+    /* gerando umas baterias randomicamente */
+    srand(time(NULL));
+    for(int x = 0; x < 2; x++){
+        for(int y = 0; y < maxRobots; y++){
+            (*robotsInfo).battery[x][y] = rand()%100;
+            if(x == 0) cout << "Robo " << y << " do time azul: " << (int)(*robotsInfo).battery[x][y] << " de bateria." << endl;
+            else cout << "Robo " << y << " do time amarelo: " << (int)(*robotsInfo).battery[x][y] << " de bateria." << endl;
+        }
+    }
+}
 
+int main(){
     // abrindo o cliente do SSL-Vision
     RoboCupSSLClient client;
     client.open(true);
     SSL_WrapperPacket packet;
+
+    // pacote enviado para o samico
     pacote robosInfo;
 
     initRobots();
     initBall();
     initKalman();
     initSamicoSocket();
-    
-    /* gerando umas baterias randomicamente */
-    srand(time(NULL));
-    for(int x = 0; x < 2; x++){
-        for(int y = 0; y < maxRobots; y++){
-            robosInfo.battery[x][y] = rand()%100;
-            cout << "randomizei: " << (int)robosInfo.battery[x][y] << endl;
-        }
-    }
+    if(bateriasRandomicas) gerarBaterias(&robosInfo);
     
     while(true){
         if(client.receive(packet)){
