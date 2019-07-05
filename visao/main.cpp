@@ -4,6 +4,7 @@
 #include "timer.h"
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
 #include "Robot.hpp"
 #include "Ball.hpp"
@@ -126,8 +127,6 @@ int addrlen = sizeof(address);
 /* variaveis dos filtros */
 unsigned int filterTime;
 bool firstKalmanInput[2][maxRobots] = {false};
-bool firstKalmanInputB[maxRobots] = {false};
-bool firstKalmanInputY[maxRobots] = {false};
 bool firstKalmanBall = false;
 KalmanFilter filterBallX;
 KalmanFilter filterBallY;
@@ -141,7 +140,6 @@ Ball *ball;
 
 void initRobots(){
     roboFiltrado aux;
-
     /* criação do vetor dinamico de objetos */
     for(uint8_t x = 0; x < qt_robosTime; x++){
         robosAzuis.push_back(aux);
@@ -160,13 +158,11 @@ void initBall(){
 
 void initSamicoSocket(){
     // criação do socket
-
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){ 
+    if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){ 
         cout << "Erro na criação do socket" << endl;
         exit(-1);
     } 
-      
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){ 
+    if(setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){ 
         cout << "Erro na setsockopt" << endl;
         exit(-1); 
     }
@@ -174,20 +170,18 @@ void initSamicoSocket(){
     address.sin_family = AF_INET; 
     address.sin_addr.s_addr = INADDR_ANY; 
     address.sin_port = htons(PORT); 
-       
+
     // tentando bindar o endereco (pegar prioridade) 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0){ 
+    if(bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0){ 
         printf("Bind error.\n");
         exit(-1);
     } 
-
     // verificando se foi possivel dar o listen
-    if (listen(server_fd, 3) < 0){
+    if(listen(server_fd, 3) < 0){
         printf("Listen error.\n");
         exit(-1);
     }
-
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0){ 
+    if((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0){ 
         printf("Connection accept error.\n");
         exit(-1);
     }
@@ -225,12 +219,15 @@ void initKalman(){
         robosAmarelos[x].kalmanx = KalmanFilter(dt, A, C, Q, R, P);
         robosAmarelos[x].kalmany = KalmanFilter(dt, A, C, Q, R, P);
     }
+    
     filterBallX = KalmanFilter(dt, A, C, Q, R, P);
     filterBallY = KalmanFilter(dt, A, C, Q, R, P);
 }
 
-void filterRobot(SSL_DetectionFrame &detection, roboFiltrado *robo, bool isBlue, int iteration){
+void filterRobot(SSL_DetectionFrame &detection, roboFiltrado *robo, bool isBlue, int iteration, pacote *robotsInfo){
     int id;
+    robot_coords robot_aux_coord;
+
     if(isBlue){
         id = detection.robots_blue(iteration).robot_id();
         (*robo).robot->setId(detection.robots_blue(iteration).robot_id());
@@ -238,6 +235,13 @@ void filterRobot(SSL_DetectionFrame &detection, roboFiltrado *robo, bool isBlue,
         (*robo).robot->setCoordinates(detection.robots_blue(iteration).x(), detection.robots_blue(iteration).y());
         (*robo).robot->setAngle(detection.robots_blue(iteration).orientation());
         (*robo).robot->setTeam(true);
+
+        printf("Dados do robo chegou:\n");
+        printf("%d\n", detection.robots_blue(iteration).robot_id());
+        printf("%lf\n", detection.robots_blue(iteration).height());
+        printf("%lf\n", detection.robots_blue(iteration).x());
+        printf("%lf\n", detection.robots_blue(iteration).y());
+        printf("%lf\n", detection.robots_blue(iteration).orientation());
     }else{
         id = detection.robots_yellow(iteration).robot_id();
         (*robo).robot->setId(detection.robots_yellow(iteration).robot_id());
@@ -246,10 +250,9 @@ void filterRobot(SSL_DetectionFrame &detection, roboFiltrado *robo, bool isBlue,
         (*robo).robot->setAngle(detection.robots_yellow(iteration).orientation());
         (*robo).robot->setTeam(false);
     }
-
     (*robo).noiseFilter.noiseRobotFilter((*((*robo).robot)));
     (*robo).lossFilter.lossRobotFilter((*((*robo).robot)), true);
-    
+
     if(isBlue){
         if(!firstKalmanInput[0][id]){
             firstKalmanInput[0][id] = true;
@@ -293,42 +296,43 @@ void filterRobot(SSL_DetectionFrame &detection, roboFiltrado *robo, bool isBlue,
             (*robo).kalmany.update(zy);
         } 
     }
-
     (*robo).robot->setCoordinates((*robo).kalmanx.state().transpose()(0), (*robo).kalmany.state().transpose()(0));
     if(printarInfoRobos) (*robo).robot->printRobotInfo();
+
+    if(isBlue){
+        robot_aux_coord.id = (*robo).robot->robot_id;
+        robot_aux_coord.angle = (*robo).robot->getAngle();
+        robot_aux_coord.x = (*robo).robot->getRobotX();
+        robot_aux_coord.y = (*robo).robot->getRobotY();
+
+        (*robotsInfo).robots_blue[iteration] = robot_aux_coord;
+    }else{
+        robot_aux_coord.id = (*robo).robot->robot_id;
+        robot_aux_coord.angle = (*robo).robot->getAngle();
+        robot_aux_coord.x = (*robo).robot->getRobotX();
+        robot_aux_coord.y = (*robo).robot->getRobotY();
+
+        (*robotsInfo).robots_yellow[iteration] = robot_aux_coord;
+    }
 }
 
 void setRobotsInfo(SSL_DetectionFrame &detection, vector<roboFiltrado> &robosAzuis, vector<roboFiltrado> &robosAmarelos, pacote *robotsInfo){
     uint8_t qt_robosAzuis = detection.robots_blue_size();
     uint8_t qt_robosAmarelos = detection.robots_yellow_size();
+    cout << qtThread_blueRobots << " " << qtThread_yellowRobots << endl;
 
     (*robotsInfo).qt_blue = qt_robosAzuis;
     (*robotsInfo).qt_yellow = qt_robosAmarelos;
     (*robotsInfo).camera_id = detection.camera_id();
-    robot_coords robot_aux_coord;
     
     for(uint8_t x = 0; x < qt_robosAzuis; x++){
         int id = detection.robots_blue(x).robot_id();
-        filterRobot(detection, &robosAzuis[id], true, x);
-
-        robot_aux_coord.id = robosAzuis[id].robot->robot_id;
-        robot_aux_coord.angle = robosAzuis[id].robot->getAngle();
-        robot_aux_coord.x = robosAzuis[id].robot->getRobotX();
-        robot_aux_coord.y = robosAzuis[id].robot->getRobotY();
-
-        (*robotsInfo).robots_blue[x] = robot_aux_coord;
+        filterRobot(detection, &robosAzuis[id], true, x, robotsInfo);
     }
 
     for(uint8_t x = 0; x < qt_robosAmarelos; x++){
         int id = detection.robots_yellow(x).robot_id();
-        filterRobot(detection, &robosAmarelos[id], false, x);
-
-        robot_aux_coord.id = robosAmarelos[id].robot->robot_id;
-        robot_aux_coord.angle = robosAmarelos[id].robot->getAngle();
-        robot_aux_coord.x = robosAmarelos[id].robot->getRobotX();
-        robot_aux_coord.y = robosAmarelos[id].robot->getRobotY();
-
-        (*robotsInfo).robots_yellow[x] = robot_aux_coord;
+        filterRobot(detection, &robosAmarelos[id], false, x, robotsInfo);
     }
 }
 
@@ -361,7 +365,6 @@ void setBallInfo(SSL_DetectionFrame &detection, Ball &ball, pacote *robotsInfo){
 }
 
 void gerarBaterias(pacote *robotsInfo){
-    /* gerando umas baterias randomicamente */
     srand(time(NULL));
     for(int x = 0; x < 2; x++){
         for(int y = 0; y < maxRobots; y++){
@@ -369,6 +372,24 @@ void gerarBaterias(pacote *robotsInfo){
             if(x == 0) cout << "Robo " << y << " do time azul: " << (int)(*robotsInfo).battery[x][y] << " de bateria." << endl;
             else cout << "Robo " << y << " do time amarelo: " << (int)(*robotsInfo).battery[x][y] << " de bateria." << endl;
         }
+    }
+}
+
+void debugPacket(pacote robosInfo){
+    printf("pacote debug:\n");
+    printf("Robos azuis:\n");
+    for(int x = 0; x < robosInfo.qt_blue; x++){
+        printf("ID: %d\n", robosInfo.robots_blue[x].id);
+        printf("X: %lf\n", robosInfo.robots_blue[x].x);
+        printf("Y: %lf\n", robosInfo.robots_blue[x].y);
+        printf("ANGLE: %lf\n", robosInfo.robots_blue[x].angle);
+    }
+    printf("\nRobos amarelos:\n");
+    for(int x = 0; x < robosInfo.qt_yellow; x++){
+        printf("ID: %d\n", robosInfo.robots_yellow[x].id);
+        printf("X: %lf\n", robosInfo.robots_yellow[x].x);
+        printf("Y: %lf\n", robosInfo.robots_yellow[x].y);
+        printf("ANGLE: %lf\n\n", robosInfo.robots_yellow[x].angle);
     }
 }
 
@@ -386,7 +407,6 @@ int main(){
     initKalman();
     initSamicoSocket();
     if(bateriasRandomicas) gerarBaterias(&robosInfo);
-    
     while(true){
         if(client.receive(packet)){
             if(packet.has_detection()){
