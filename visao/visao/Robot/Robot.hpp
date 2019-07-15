@@ -1,5 +1,10 @@
 #pragma once
+
+#include "Robot/Robot.hpp"
+#include "Ball/Ball.hpp"
 #include <stdint.h>
+#include<QDebug>
+
 
 class Robot{
     public:

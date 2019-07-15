@@ -9,7 +9,7 @@
 *.dll
 *.dylib
 .vscode/
-
+./build-visao-Desktop-Debug
 
 # Qt-es
 object_script.*.Release

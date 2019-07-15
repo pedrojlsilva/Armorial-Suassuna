@@ -4,6 +4,7 @@
 #include <ctime>
 
 class Timer {
+
 public:
     Timer() { }
 

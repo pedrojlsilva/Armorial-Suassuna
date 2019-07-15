@@ -1,5 +1,6 @@
 #include "Robot.hpp"
 
+
 /* Robot methods */
 
 Robot::Robot(uint8_t id, bool teamBlue){
@@ -13,7 +14,7 @@ Robot::~Robot(){
 }
 
 void Robot::printRobotInfo(){
-    if(this->getTeam() == 0) printf("Yellow Robot |");
+    if(this->getTeam() == 0) qDebug()<<("Yellow Robot |")<<endl;
     else printf("Blue Robot |");
 
     printf("ID: %d\t", this->robot_id);

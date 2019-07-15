@@ -1,93 +1,67 @@
-/**
-* Kalman filter implementation using Eigen. Based on the following
-* introductory paper:
-*
-*     http://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf
-*
-* @author: Hayk Martirosyan
-* @date: 2014.11.15
-*/
+#ifndef KALMANFILTER2D_H
 
-#include "Eigen/Dense"
+#define KALMANFILTER2D_H
 
-#pragma once
+#include <QString>
 
-class KalmanFilter {
+#include "include/timer.h"
+#include "types/types.h"
+#include "kalmanstate.h"
+#include "matrix.h"
 
-public:
-
-  /**
-  * Create a Kalman filter with the specified matrices.
-  *   A - System dynamics matrix
-  *   C - Output matrix
-  *   Q - Process noise covariance
-  *   R - Measurement noise covariance
-  *   P - Estimate error covariance
-  */
-  KalmanFilter(
-      double dt,
-      const Eigen::MatrixXd& A,
-      const Eigen::MatrixXd& C,
-      const Eigen::MatrixXd& Q,
-      const Eigen::MatrixXd& R,
-      const Eigen::MatrixXd& P
-  );
-
-  /**
-  * Create a blank estimator.
-  */
-  KalmanFilter();
-
-  /**
-  * Initialize the filter with initial states as zero.
-  */
-  void init();
-
-  /**
-  * Initialize the filter with a guess for initial states.
-  */
-  void init(double t0, const Eigen::VectorXd& x0);
-
-  /**
-  * Update the estimated state based on measured values. The
-  * time step is assumed to remain constant.
-  */
-  void update(const Eigen::VectorXd& y);
-
-  /**
-  * Update the estimated state based on measured values,
-  * using the given time step and dynamics matrix.
-  */
-  void update(const Eigen::VectorXd& y, double dt, const Eigen::MatrixXd A);
-  
-  void update(const Eigen::VectorXd& y, double dt, const Eigen::MatrixXd A, const Eigen::MatrixXd Q);
-
-  /**
-  * Return the current state and time.
-  */
-  Eigen::VectorXd state() { return x_hat; };
-  double time() { return t; };
+class KalmanFilter2D {
 
 private:
 
-  // Matrices for computation
-  Eigen::MatrixXd A, C, Q, R, P, K, P0;
+    Timer _timer;
 
-  // System dimensions
-  int m, n;
+    // Initial state
 
-  // Initial and current time
-  double t0, t;
+    bool _has1stPosition, _has2ndPosition;
 
-  // Discrete time step
-  double dt;
+    // State and covariance matrices
 
-  // Is the filter initialized?
-  bool initialized;
+    KalmanState _X, _Y;
 
-  // n-size identity
-  Eigen::MatrixXd I;
+    Matrix _Px, _Py;
 
-  // Estimated states
-  Eigen::VectorXd x_hat, x_hat_new;
+    // Model
+
+    Matrix _A;
+
+    Matrix _H;
+
+    Matrix _Q;
+
+    Matrix _R;
+
+    // Model config
+
+    static constexpr float _p = 1;
+
+    static constexpr float _sigma_a = 0.01; // affects Q
+
+    static constexpr float _r = 0.000283; // affects R
+
+    // Private methods
+
+    void updateMatrices(const float T);
+
+public:
+
+    KalmanFilter2D();
+
+    QString name();
+
+    void iterate(Position &pos);
+
+    void predict();
+
+    Position getPosition();
+
+    Velocity getVelocity();
+
+    Velocity getAcceleration();
+
 };
+#endif
