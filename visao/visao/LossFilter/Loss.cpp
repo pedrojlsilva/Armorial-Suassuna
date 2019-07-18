@@ -1,18 +1,40 @@
-/* loss filter methods */
+
 #include "Loss.hpp"
 
-bool Loss::lossRobotFilter(Robot &newCoord){
-	static double iniTime = clock();
-	bool ret = (clock() - iniTime >= filterTime);
-	if(ret) newCoord.~Robot();
-	return ret;
+Loss::Loss(){
+
 }
 
-bool Loss::lossBallFilter(Ball &newCoord){
-	static double iniTime = clock();
-	bool ret = (clock() - iniTime >= filterTime);
-	if(ret) newCoord.~Ball();
-	return ret;
+void Loss::setFilterTime(double time){
+    this->filterTime = time;
 }
- 
-/* end of loss filter methods */
+
+bool Loss::lossRobotFilter(Robot &newCoord, bool update){
+    if(update){
+        temporizer = clock();
+        return false;
+    }
+
+    bool ret = (((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime);
+    if(ret){
+        newCoord.~Robot();
+        temporizer = clock();
+    }
+    return ret;
+}
+
+bool Loss::lossBallFilter(Ball &newCoord, bool update){
+    if(update){
+        temporizer = clock();
+        return false;
+    }
+
+    bool ret = (((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime);
+
+    if(ret){
+        newCoord.~Ball();
+        temporizer = clock();
+    }
+    return ret;
+}
+

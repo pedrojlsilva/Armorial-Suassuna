@@ -28,24 +28,20 @@ private:
     // Model
 
     Matrix _A;
-
     Matrix _H;
-
     Matrix _Q;
-
     Matrix _R;
 
     // Model config
 
     static constexpr float _p = 1;
-
     static constexpr float _sigma_a = 0.01; // affects Q
-
     static constexpr float _r = 0.000283; // affects R
 
     // Private methods
 
     void updateMatrices(const float T);
+    bool enabled;
 
 public:
 
@@ -62,6 +58,10 @@ public:
     Velocity getVelocity();
 
     Velocity getAcceleration();
+
+    void setEnabled(bool _enable);
+
+    bool getEnabled();
 
 };
 #endif

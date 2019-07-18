@@ -34,9 +34,9 @@ void  Position::setPosition(float newX, float newY) {
 
 // Info functions
 
-bool Position::isUnknown() { return(_unknown); }
+bool Position::isUnknown() const { return _unknown; }
 
-bool Position::isValid()   { return(_isValid);   }
+bool Position::isValid()   { return _isValid;   }
 
 void Position::setInvalid() { _isValid = false; }
 

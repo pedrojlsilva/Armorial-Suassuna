@@ -9,6 +9,7 @@ QString KalmanFilter2D::name() {
 KalmanFilter2D::KalmanFilter2D() {
 
     _has1stPosition = _has2ndPosition = false;
+    enable=false;
 
     // Initialize state matrices
 
@@ -176,20 +177,29 @@ void KalmanFilter2D::predict() {
 
 }
 
+void KalmanFilter2D::setEnabled(bool _enable){
+    enabled=_enable;
+}
+
+bool KalmanFilter2D::getEnabled(){
+    return enabled;
+}
+
+
 Position KalmanFilter2D::getPosition() {
 
     return Position(true, _X.getPosition(), _Y.getPosition());
 
 }
 
-//Velocity KalmanFilter2D::getVelocity(){
+Velocity KalmanFilter2D::getVelocity(){
 
-//    return Velocity(true, _X.getVelocity(), _Y.getVelocity());
+   return Velocity(true, _X.getVelocity(), _Y.getVelocity());
 
-//}
+}
 
-//Velocity KalmanFilter2D::getAcceleration(){
+Velocity KalmanFilter2D::getAcceleration(){
 
-//    return Velocity(true, _X.getAcceleration(), _Y.getAcceleration());
+    return Velocity(true, _X.getAcceleration(), _Y.getAcceleration());
 
-//}
+}

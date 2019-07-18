@@ -5,9 +5,18 @@
 #include "Ball/Ball.hpp"
 
 class Noise{
-	public:
-		void noiseRobotFilter(Robot &newCoord);
-		void noiseBallFilter(Ball &newCoord);
+public:
+
+    Noise();
+    void initCounter();
+    void setOff();
+    bool isInitialized();
+    bool noiseFilter();
+    void setFilterTime(double time);
+private:
+    double filterTime;
+    double temporizer;
+    bool initialized;
 };
 
 #endif

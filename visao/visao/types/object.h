@@ -4,6 +4,7 @@
 
 #include <QReadWriteLock>
 #include "types/position.h"
+#include "types/velocity.h"
 #include "types/angle.h"
 #include "include/filters.h"
 
@@ -11,18 +12,23 @@
 class Object
 {
 public:
-    Object(bool enableLoss=true, bool enableKalman=true, bool enableNoise=true);
+    Object();
     ~Object();
     void update(double confidence, const Position &pos, const Angle &ori=Angle(false, 0));
 
 
-    Position _position();
-    //Velocity velocity(); // ainda nao usado
-    Angle _orientation();
-    double confidence();
+    Position _position = Position();
+    Velocity _velocity =  Velocity();
+    Angle _orientation = Angle();
+    double getConfidence();
+    Position getPosition();
+    Velocity getVelocity();
+    Angle getOrientation();
     bool enableLoss;
     bool enableNoise;
     bool enableKalman;
+
+
 
     void setUnknown();
 
@@ -38,11 +44,9 @@ private:
 
     // Filters
 
-    Loss _lossFilter;
-
-    KalmanFilter2D _kalmanFilter;
-
-    Noise _noiseFilter;
+    Loss _lossFilter = Loss();
+    KalmanFilter2D _kalmanFilter = KalmanFilter2D();
+    Noise _noiseFilter = Noise();
 
     // Brute velocity calc
 

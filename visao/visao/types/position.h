@@ -12,7 +12,7 @@ public:
     float getX();
     float getY();
     float getAngle();
-    bool isUnknown();
+    bool isUnknown() const;
     bool isValid();
     void setUnknown();
     void setInvalid();

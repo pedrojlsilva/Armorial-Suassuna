@@ -1,13 +1,13 @@
 #include "object.h"
 
 
-Object::Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter) {
+Object::Object() {
 
-    _lossFilter.setEnabled(enableLossFilter);
+//    _lossFilter.setEnabled(enableLossFilter);
 
-    _kalmanFilter.setEnabled(enableKalmanFilter);
+    _kalmanFilter.setEnabled(true);
 
-    _noiseFilter.setEnabled(enableNoiseFilter);
+//    _noiseFilter.setEnabled(enableNoiseFilter);
 
     _zero = false;
 
@@ -25,7 +25,7 @@ Object::~Object() {
 
 }
 
-Position Object::position() {
+Position Object::getPosition() {
 
     _mutex.lockForRead();
 
@@ -37,7 +37,7 @@ Position Object::position() {
 
 }
 
-Velocity Object::velocity() {
+Velocity Object::getVelocity() {
 
     _mutex.lockForRead();
 
@@ -49,7 +49,7 @@ Velocity Object::velocity() {
 
 }
 
-Angle Object::orientation() {
+Angle Object::getOrientation() {
 
     _mutex.lockForRead();
 
@@ -61,7 +61,7 @@ Angle Object::orientation() {
 
 }
 
-double Object::confidence() {
+double Object::getConfidence() {
 
     _mutex.lockForRead();
 
@@ -77,103 +77,7 @@ void Object::update(double confidence, const Position &pos, const Angle &ori) {
 
     _mutex.lockForWrite();
 
-    // Update confidence
-
-    _confidence = confidence;
-
-    // Object lost
-
-    if(pos.isUnknown()) {
-
-        // Set to unknown if object is really lost
-
-        if(_lossFilter.enabled()==false || (_lossFilter.enabled() && _lossFilter.isObjectLost())) {
-
-            // Reset object safe
-
-            _noiseFilter.resetNoiseTimer();
-
-            setUnknown();
-
-        // Maintain position/prediction for a little while before removing object
-
-        } else {
-
-            _zero = false;
-
-            if(_kalmanFilter.enabled()) {
-
-                // Predict trajetory with Kalman and keep same orientation
-
-                _kalmanFilter.predict();
-
-                _position = _kalmanFilter.getPosition();
-
-                _velocity = _kalmanFilter.getVelocity();
-
-                updateToSensor();
-
-            } else {
-
-                // Nothing, just leave robot where it disappeared
-
-            }
-
-        }
-
-    // Object in camera
-
-    } else {
-
-        // Set position from camera if object is really safe
-
-        if(_noiseFilter.enabled()==false || (_noiseFilter.enabled() && _noiseFilter.isObjectSafe())) {
-
-            // Reset object lost
-
-            _zero = false;
-
-            _lossFilter.resetLossTimer();
-
-            // Update
-
-            if(_kalmanFilter.enabled()) {
-
-                // Filter with Kalman
-
-                _kalmanFilter.iterate(pos);
-
-                _position = _kalmanFilter.getPosition();
-
-                _velocity = _kalmanFilter.getVelocity();
-
-                _orientation = ori;
-
-                //updateToSensor();
-
-            } else {
-
-                // Just use brute data
-
-                _position = pos;
-
-                //_velocity = _objVel.getVelocity(pos);
-
-                _orientation = ori;
-
-                //updateToSensor();
-
-            }
-
-        // Maintain object unknown for a little while before including object
-
-        } else {
-
-            setUnknown();
-
-        }
-
-    }
+//atualizar com a lógica de zilde
 
     _mutex.unlock();
 
@@ -185,7 +89,7 @@ void Object::setUnknown() {
 
         _confidence = 0.0;
 
-        _position = Position(false, 0, 0, 0);
+        _position = Position(false, 0, 0);
 
         _velocity = Velocity(false, 0, 0);
 
