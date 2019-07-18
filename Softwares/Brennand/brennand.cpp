@@ -29,9 +29,8 @@ Brennand::Brennand(QWidget *parent) :
     for(int i = 0; i < 12 ; i++){
        timer[i].start();
     }
-
+    memset(vetorVel, 0, sizeof(vetorVel));
     ui->boxDevice->addItem("No Port Connected");
-
     devSerial = new QSerialPort();
     procSerial = new serialConnection(devSerial);
 }
@@ -188,19 +187,19 @@ void Brennand::on_kickButton_4_clicked(){
 }
 
 void Brennand::on_checkBox_13_clicked(){
-    checkboxes[0] = !checkboxes[0];
+    checkboxes[0] = !checkboxes[0];//robo 1 box
 }
 
 void Brennand::on_checkBox_14_clicked(){
-    checkboxes[1] = !checkboxes[1];
+    checkboxes[1] = !checkboxes[1];//robo 2 box
 }
 
 void Brennand::on_checkBox_15_clicked(){
-    checkboxes[2] = !checkboxes[2];
+    checkboxes[2] = !checkboxes[2];//robo 3 box
 }
 
 void Brennand::on_checkBox_16_clicked(){
-    checkboxes[3] = !checkboxes[3];
+    checkboxes[3] = !checkboxes[3];//robo 4 box
 }
 
 void Brennand::on_checkBox_2_clicked(){
@@ -303,16 +302,46 @@ unsigned char Brennand::velMotor(bool isChecked, int valorSlider){
 void Brennand::CriaRobo(ser *s, int check){
     QElapsedTimer timer_transmissao;
     bool startTime_transmissao = true;
-
+    int value_text = 0, send_value_text = 0, countW = 0;
     checkboxes[check-1] = false;
-
     while(true){
-        if(iniciouTransmissao){
+        if(gamepad->isVisible()){
+            gamepad->setDirection();
+            if(gamepad->game->buttonB()){
+                // botao "O" pressionado
+                chutes[0] = true;
+                qDebug() << "chuta";
+            }
+            if(gamepad->game->buttonX()){
+                // botao quadrado pressionado
+                dribles[0] = !dribles[0];
+            }
+            if(gamepad->game->buttonY()){
+                // botao r1 pressionado
+            }
+            if(gamepad->game->buttonA()){
+                // botao X pressionado
+            }
+            vetorVel[0] = gamepad->game->axisLeftX();//converte o valor dado pelo joystick para um range de -33 a 33 no eixo x
+            vetorVel[1] = gamepad->game->axisLeftY();//converte o valor dado pelo joystick para um range de -33 a 33 no eixo y
+            countW++;//necessario para diminuir a velocidade com que decai ou aumenta a velocidade angular
+            if(countW > 100000){
+                countW = 0;
+                if(gamepad->game->buttonL1() && vetorVel[2] > -120){
+                    vetorVel[2] -= 2;  //aumentar o valor da velocidade angular
+                }else if(gamepad->game->buttonR1() && vetorVel[2] < 120){
+                    vetorVel[2] += 2;  //diminuir o valor da velocidade angular
+                }else if((!gamepad->game->buttonR1() && !gamepad->game->buttonL1()) || (gamepad->game->buttonR1() && gamepad->game->buttonL1())){
+                    vetorVel[2] = 0; //se nenhum botao for tocado
+                }
+            }
+        }
+        if(iniciouTransmissao) {
+
             if(startTime_transmissao){
                 timer_transmissao.start();
                 startTime_transmissao = false;
             }
-
             if(timer_transmissao.hasExpired(TAXA_TRANSMISSAO) && checkboxes[check-1]){
 
                 emit s->transmitindo(check);
@@ -477,3 +506,8 @@ bool Brennand::comecouTransmissao(){
 }
 
 
+
+void Brennand::on_Joystick_clicked()
+{
+    this->gamepad->show();
+}

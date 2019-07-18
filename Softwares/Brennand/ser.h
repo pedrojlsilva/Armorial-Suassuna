@@ -9,6 +9,10 @@ class ser : public QObject{
 signals:
     void transmitindo(int);
     void procurando();
+    void joystickA();
+    void joystickB();
+    void joystickY();
+    void joystickX();
 };
 
 #endif

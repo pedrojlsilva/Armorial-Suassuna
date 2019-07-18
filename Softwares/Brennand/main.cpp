@@ -18,30 +18,30 @@
 #include "brennand.h"
 #include "crc.h"
 #include "ser.h"
-
+#include "gamepad.h"
 using namespace std;
 
 int main(int argc, char *argv[]){
     QApplication app(argc, argv);
     Brennand *brennand = new Brennand();
     ser serial_signal;
-
     brennand->show();
-
     QObject::connect(&serial_signal, SIGNAL(transmitindo(int)), brennand, SLOT(enviaComando(int)));
     QObject::connect(&serial_signal, SIGNAL(procurando()), brennand, SLOT(procurarPortas()));
+    //QObject::connect(&serial_signal, SIGNAL(joystickX()), brennand, SLOT(on_slider_motor1_valueChanged(int)));
+
 
     QThread *robo1 = QThread::create(&Brennand::CriaRobo, ref(*brennand), &serial_signal, 1);
     robo1->start();
 
-    QThread *robo2 = QThread::create(&Brennand::CriaRobo, ref(*brennand), &serial_signal, 2);
+    /*QThread *robo2 = QThread::create(&Brennand::CriaRobo, ref(*brennand), &serial_signal, 2);
     robo2->start();
 
     QThread *robo3 = QThread::create(&Brennand::CriaRobo, ref(*brennand), &serial_signal, 3);
     robo3->start();
 
     QThread *robo4 = QThread::create(&Brennand::CriaRobo, ref(*brennand), &serial_signal, 4);
-    robo4->start();
+    robo4->start();*/
 
     QThread *usb_search = QThread::create(&Brennand::InitProcura, ref(*brennand), &serial_signal);
     usb_search->start();

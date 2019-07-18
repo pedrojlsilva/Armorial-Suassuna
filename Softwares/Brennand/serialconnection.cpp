@@ -64,7 +64,7 @@ QStringList serialConnection::loadPorts(){
  * @return
  */
 
-bool serialConnection::connect(QString Port, u_int32_t bd){
+bool serialConnection::connect(QString Port, uint32_t bd){
     //Device Serial Port
     devSerial->setPortName(Port);
     qDebug() << "Dispositivo Porta Serial: " << Port;
@@ -182,7 +182,7 @@ QString serialConnection::read(){
  * @return QString
  */
 QString serialConnection::read(int TamanhoBuffer){
-    char buf[TamanhoBuffer];
+    char buf[255];
 
     if (devSerial->canReadLine()) {
         devSerial->read(buf, qint64(sizeof(buf)));

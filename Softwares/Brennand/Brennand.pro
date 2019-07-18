@@ -8,6 +8,8 @@ QT       += core gui
 
 QT += serialport
 
+QT += gamepad
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
@@ -25,22 +27,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++17
+CONFIG += c++14
 
 SOURCES += \
+    gamepad.cpp \
         main.cpp \
         brennand.cpp \
     robot.cpp \
     serialconnection.cpp
 HEADERS += \
         brennand.h \
+    gamepad.h \
     robot.h \
     serialconnection.h \
     crc.h \
     ser.h
 
+LIBS += -lwinmm
+
 FORMS += \
-        brennand.ui
+        brennand.ui \
+        gamepad.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

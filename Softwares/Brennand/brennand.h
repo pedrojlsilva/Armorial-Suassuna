@@ -1,6 +1,7 @@
 #ifndef BRENNAND_H
 #define BRENNAND_H
 
+#include <QTabWidget>
 #include <QSerialPortInfo>
 #include <QElapsedTimer>
 #include <QMainWindow>
@@ -8,11 +9,12 @@
 #include <iostream>
 #include <QThread>
 #include <thread>
+#include <utility>
 #include "serialconnection.h"
 #include "ui_brennand.h"
 #include "robot.h"
 #include "ser.h"
-
+#include "gamepad.h"
 #define BR_SERIAL 38400
 #define INVERTIDO 128
 #define TAXA_TRANSMISSAO 40 //Milisegundos
@@ -96,12 +98,15 @@ private slots:
     void on_checkBox_30_clicked();
     void on_checkBox_29_clicked();
 
+    void on_Joystick_clicked();
+
 public slots:
     void enviaComando(int i);
     void procurarPortas();
 
 private:
     QElapsedTimer timer[12];
+    int vetorVel[3];
     bool chutes[4];
     bool dribles[4];
     bool checkboxes[4];
@@ -109,6 +114,7 @@ private:
     QSerialPort *devSerial;
     serialConnection *procSerial;
     bool controlePorta, controleTransmissao, iniciouTransmissao;
+    Gamepad *gamepad = new Gamepad;
     int cont = 0;
 };
 
