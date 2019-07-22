@@ -9,7 +9,7 @@ QString KalmanFilter2D::name() {
 KalmanFilter2D::KalmanFilter2D() {
 
     _has1stPosition = _has2ndPosition = false;
-    enable=false;
+    enabled=false;
 
     // Initialize state matrices
 
