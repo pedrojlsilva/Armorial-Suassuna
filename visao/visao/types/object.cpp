@@ -61,6 +61,11 @@ Angle Object::getOrientation() {
 
 }
 
+void Object::setFilterTimes(double time){
+    this->_lossFilter.setFilterTime(time);
+    this->_noiseFilter.setFilterTime(time);
+}
+
 double Object::getConfidence() {
 
     _mutex.lockForRead();
@@ -76,9 +81,21 @@ double Object::getConfidence() {
 void Object::update(double confidence, const Position &pos, const Angle &ori) {
 
     _mutex.lockForWrite();
+    
+    _confidence = confidence;
 
-//atualizar com a lógica de zilde
-
+    if(!_noiseFilter.isInitialized()){
+        _noiseFilter.initCounter();
+        _position.setInvalid(); // como o filtro de ruido ainda nao terminou
+                                // é necessário invalidar a posição até que ele acabe
+    }else{
+        if(_noiseFilter.noiseFilter()){ // caso o filtro tenha terminado o tempo
+            _lossFilter.lossFilter(true); // dou update no filtro de perda
+            _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
+            _position.setPosition(_kalmanFilter.getPosition()); // pega a posição retornada pelo kalman
+            _orientation.setValue(ori.value()); // dou update no angulo do robo
+        }
+    }
     _mutex.unlock();
 
 }

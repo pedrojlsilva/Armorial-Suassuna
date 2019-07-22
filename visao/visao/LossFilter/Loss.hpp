@@ -1,16 +1,11 @@
-#ifndef loss
-#define LOSS_H
-
-
+#pragma once
+#include <time.h>
 
 class Loss{
-public:
-    Loss();
-    bool lossRobotFilter();
-    void setFilterTime(double time);
-private:
-    double filterTime;
-    double temporizer;
+    public:
+        bool lossFilter(bool update);
+        void setFilterTime(double time);
+	private:
+		double filterTime;
+        double temporizer;
 };
-
-#endif

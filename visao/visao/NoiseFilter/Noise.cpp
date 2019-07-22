@@ -1,36 +1,29 @@
 /* noise filter methods */
 
-#include "Noise.hpp"
-
-Noise::Noise(){
-
-}
-
 void Noise::setFilterTime(double time){
-    this->filterTime = time;
+	this->filterTime = time;
 }
 
 void Noise::setOff(){
-    this->initialized = false;
+	this->initialized = false;
 }
 
 bool Noise::isInitialized(){
-    return this->initialized;
+	return this->initialized;
 }
 
 void Noise::initCounter(){
-    this->temporizer = clock();
-    this->initialized = true;
+	this->temporizer = clock();
+	this->initialized = true;
 }
 
 bool Noise::noiseFilter(){
 
-    if(((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime){
-        return true;
-    }
+	if(((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime){
+		return true;
+	}
 
-    return false;
+	return false;
 }
-
 
 /* end of noise filter methods */
