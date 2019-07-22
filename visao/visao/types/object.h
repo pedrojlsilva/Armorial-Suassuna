@@ -24,6 +24,7 @@ public:
     Position getPosition();
     Velocity getVelocity();
     Angle getOrientation();
+    void setFilterTimes(double time);
     bool enableLoss;
     bool enableNoise;
     bool enableKalman;

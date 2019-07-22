@@ -3,7 +3,7 @@
 #include "Robot/Robot.hpp"
 #include "Ball/Ball.hpp"
 #include <stdint.h>
-#include<QDebug>
+#include <QDebug>
 
 
 class Robot{
