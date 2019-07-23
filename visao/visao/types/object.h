@@ -3,9 +3,7 @@
 
 
 #include <QReadWriteLock>
-#include "types/position.h"
-#include "types/velocity.h"
-#include "types/angle.h"
+#include "types/types.h"
 #include "include/filters.h"
 
 

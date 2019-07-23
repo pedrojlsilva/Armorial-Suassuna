@@ -1,66 +1,31 @@
-#include "Robot.hpp"
+#include "Robot.h"
 
 
 /* Robot methods */
 
-Robot::Robot(uint8_t id, bool teamBlue){
-    this->robot_id = id;
-    this->active = true;
-    this->teamBlue = teamBlue;
+Robot::Robot(Color color, quint8 teamId, quint8 robotId, bool debugDetection) : Object() {
+
+    _color = color;
+    _teamId = teamId;
+    _robotId = robotId;
+    _debugDetection = debugDetection;
+
 }
 
-Robot::~Robot(){
-    this->active = false;
+QString Robot::name() {
+
+    QString ss;
+
+    ss = QString(_color==Color::BLUE?"Blue":"Yellow") + " robot, id #" + QString::number(_robotId);
+
+    return QString(ss);
+
 }
 
-void Robot::printRobotInfo(){
-    if(this->getTeam() == 0) qDebug()<<("Yellow Robot |")<<endl;
-    else printf("Blue Robot |");
 
-    printf("ID: %d\t", this->robot_id);
-    printf("Altura: %6.2lf | Posicao: <%9.2lf,%9.2lf |", this->getHeight(), this->getRobotX(), this->getRobotY());
-    printf("Angulo: %6.2lf |\n", this->getAngle());
-}
 
-void Robot::setCoordinates(double coordX, double coordY){
-    this->coordX = coordX;
-    this->coordY = coordY;
-}
+Robot::~Robot() {
 
-void Robot::setId(uint8_t id){
-    this->robot_id = id;
-}
-
-void Robot::setAngle(double angle){
-    this->angle = angle;
-}
-
-void Robot::setHeight(double height){
-    this->height = height;
-}
-
-double Robot::getRobotX(){
-    return this->coordX;
-}
-
-double Robot::getRobotY(){
-    return this->coordY;
-}
-
-double Robot::getHeight(){
-    return this->height;
-}
-
-double Robot::getAngle(){
-    return this->angle;
-}
-
-bool Robot::isActive(){
-    return this->active;
-}
-
-bool Robot::getTeam(){
-    return this->teamBlue;
 }
 
 /* end of Robot methods */

@@ -1,37 +1,30 @@
 
-#include "Ball.hpp"
+#include "Ball.h"
 
-Ball::Ball(){
-    this->active = true;
-    this->coordX = 0;
-    this->coordY = 0;
-}   
+QString Ball::name() {
 
-Ball::~Ball(){
-    this->active = false;
-    this->coordX = 0;
-    this->coordY = 0;
+    return "Ball";
+
 }
 
-void Ball::setCoordinates(double coordX, double coordY){
-    this->coordX = coordX;
-    this->coordY = coordY;
+Ball::Ball(bool debugDetection) : Object() {
+
+    _debugDetection = debugDetection;
+
 }
 
-double Ball::getBallX(){
-    return this->coordX;
+
+Position Ball::getBallPosition(){
+    if(_debugDetection){
+        std::cout << "Ball set at (" << ((_position.getX()>0)?" ":"") << _position.getX() << ", " << ((_position.getY()>0)?" ":"") << _position.getY() << "), velocity=" << _velocity.abs() << ".\n";
+    }
+    return _position;
 }
 
-double Ball::getBallY(){
-    return this->coordY;
+Velocity Ball::getBallVelocity(){
+    if(_debugDetection){
+        std::cout << "Ball set at (" << ((_position.getX()>0)?" ":"") << _position.getX() << ", " << ((_position.getY()>0)?" ":"") << _position.getY() << "), velocity=" << _velocity.abs() << ".\n";
+    }
+    return _velocity;
 }
-
-void Ball::printBallInfo(){
-    printf("Bola\tPosicao: <%9.2lf, %9.2lf>\n", this->getBallX(), this->getBallY());
-}
-
-bool Ball::isActive(){
-    return this->active;
-}
-
 /* end of Ball methods */

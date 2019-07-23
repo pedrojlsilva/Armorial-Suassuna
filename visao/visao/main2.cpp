@@ -1,16 +1,13 @@
 #include <bits/stdc++.h>
 #include "include/3rd_party/robocup_ssl_client.h"
 #include "include/3rd_party/robocup_ssl_server.h"
-#include "include/timer.h"
 #include <thread>
 #include <mutex>
-#include <condition_variables>
 
-#include "Robot/Robot.hpp"
-#include "Ball/Ball.hpp"
-#include "include/filters.h"
+#include "Ball/Ball.h"
+#include "Robot/Robot.h"
 #include "types/types.h"
-#include "types/object.h"
+
 
 #define PORT 8881
 #define IP "127.0.0.1"
@@ -22,11 +19,13 @@
 #define printarInfoBola false
 #define bateriasRandomicas true
 
+
+
 using namespace std;
 using namespace chrono;
 
 // samico packet
-int server_fd, new_socket, opt = 1; 
+int server_fd, new_socket, opt = 1;
 struct sockaddr_in address;
 int addrlen = sizeof(address);
 
@@ -47,9 +46,9 @@ typedef struct{
 
 /* variables */
 
-vector<Object> blueRobots;
-vector<Object> yellowRobots;
-Object *ball;
+vector<Robot*> blueRobots;
+vector<Robot*> yellowRobots;
+Ball *ball;
 
 void initRobots(){
     Object aux;
@@ -69,11 +68,11 @@ void initRobots(){
 }
 
 void initBall(){
-    ball = new Object();
-    (*ball).enableKalman = true;
-    (*ball).enableLoss = true;
-    (*ball).enableNoise = true;
-    (*ball).setFilterTimes(tempoFiltros);
+    ball = new Ball();
+    ball->enableKalman = true;
+    ball->enableLoss = true;
+    ball->enableNoise = true;
+    ball->setFilterTimes(tempoFiltros);
 }
 
 void initSamicoSocket(){

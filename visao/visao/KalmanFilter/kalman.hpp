@@ -49,7 +49,7 @@ public:
 
     QString name();
 
-    void iterate(Position &pos);
+    void iterate(Position spos);
 
     void predict();
 

@@ -83,7 +83,7 @@ void KalmanFilter2D::updateMatrices(const float T) {
 
 }
 
-void KalmanFilter2D::iterate(Position &pos) {
+void KalmanFilter2D::iterate(Position pos) {
 
     // Check if position is known
 

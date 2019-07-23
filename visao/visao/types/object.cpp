@@ -92,7 +92,7 @@ void Object::update(double confidence, const Position &pos, const Angle &ori) {
         if(_noiseFilter.noiseFilter()){ // caso o filtro tenha terminado o tempo
             _lossFilter.lossFilter(true); // dou update no filtro de perda
             _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
-            _position.setPosition(_kalmanFilter.getPosition()); // pega a posição retornada pelo kalman
+            _position.setPosition(_kalmanFilter.getPosition().getX(), _kalmanFilter.getPosition().getY()); // pega a posição retornada pelo kalman
             _orientation.setValue(ori.value()); // dou update no angulo do robo
         }
     }

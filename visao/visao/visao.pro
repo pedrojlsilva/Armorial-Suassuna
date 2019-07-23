@@ -19,20 +19,16 @@ SOURCES += \
     include/3rd_party/robocup_ssl_client.cpp \
     include/3rd_party/robocup_ssl_server.cpp \
     KalmanFilter/kalman.cpp \
+    KalmanFilter/kalmanstate.cpp \
+    KalmanFilter/matrix.cpp \
     LossFilter/Loss.cpp \
     NoiseFilter/Noise.cpp \
     Robot/Robot.cpp \
-    main.cpp \
-    kalmanstate.cpp \
-    matrix.cpp \
-    position.cpp \
-    velocity.cpp \
-    object.cpp \
+    types/angle.cpp \
     types/object.cpp \
     types/position.cpp \
     types/velocity.cpp \
-    main.cpp \
-    types/angle.cpp
+    main2.cpp
 
 
 # Default rules for deployment.
@@ -41,7 +37,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 SUBDIRS += \
-    visao.pro \
     visao.pro
 
 DISTFILES += \
@@ -52,20 +47,18 @@ HEADERS += \
     Ball/Ball.hpp \
     include/3rd_party/robocup_ssl_client.h \
     include/3rd_party/robocup_ssl_server.h \
+    include/filters.h \
     include/timer.h \
     KalmanFilter/kalman.hpp \
+    KalmanFilter/kalmanstate.h \
+    KalmanFilter/matrix.h \
     LossFilter/Loss.hpp \
     NoiseFilter/Noise.hpp \
-    Robot/Robot.hpp \
-    include/filters.h \
-    kalmanstate.h \
-    matrix.h \
-    position.h \
-    velocity.h \
-    object.h \
+    Robot/Robot.h \
+    types/angle.h \
     types/object.h \
     types/position.h \
+    types/types.h \
     types/velocity.h \
-    types/angle.h \
-    types/types.h
-
+    Ball/Ball.h \
+    Robot/Robot.h
