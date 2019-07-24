@@ -13,14 +13,13 @@ private:
 
 public:
 
-    Ball(bool debugDetection=true);
+    Ball(bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=true);
 
     QString name();
 
     Position getBallPosition();
     Velocity getBallVelocity();
 
-    void updateToSensor();
 
 };
 

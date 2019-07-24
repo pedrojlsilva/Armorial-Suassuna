@@ -15,20 +15,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Ball/Ball.cpp \
-    include/3rd_party/robocup_ssl_client.cpp \
-    include/3rd_party/robocup_ssl_server.cpp \
+    Ball/ball.cpp \
     KalmanFilter/kalman.cpp \
     KalmanFilter/kalmanstate.cpp \
     KalmanFilter/matrix.cpp \
-    LossFilter/Loss.cpp \
-    NoiseFilter/Noise.cpp \
-    Robot/Robot.cpp \
+    LossFilter/loss.cpp \
+    NoiseFilter/noise.cpp \
+    Robot/robot.cpp \
     types/angle.cpp \
     types/object.cpp \
     types/position.cpp \
     types/velocity.cpp \
-    main2.cpp
+    vision.cpp
 
 
 # Default rules for deployment.
@@ -44,21 +42,17 @@ DISTFILES += \
 
 
 HEADERS += \
-    Ball/Ball.hpp \
-    include/3rd_party/robocup_ssl_client.h \
-    include/3rd_party/robocup_ssl_server.h \
+    Ball/ball.h \
     include/filters.h \
     include/timer.h \
     KalmanFilter/kalman.hpp \
     KalmanFilter/kalmanstate.h \
     KalmanFilter/matrix.h \
-    LossFilter/Loss.hpp \
-    NoiseFilter/Noise.hpp \
-    Robot/Robot.h \
+    LossFilter/loss.h \
+    NoiseFilter/noise.h \
+    Robot/robot.h \
     types/angle.h \
     types/object.h \
     types/position.h \
     types/types.h \
-    types/velocity.h \
-    Ball/Ball.h \
-    Robot/Robot.h
+    types/velocity.h

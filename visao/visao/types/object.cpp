@@ -1,11 +1,10 @@
 #include "object.h"
 
-
-Object::Object() {
+Object::Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter) {
 
 //    _lossFilter.setEnabled(enableLossFilter);
 
-    _kalmanFilter.setEnabled(true);
+    _kalmanFilter.setEnabled(enableKalmanFilter);
 
 //    _noiseFilter.setEnabled(enableNoiseFilter);
 
@@ -27,11 +26,11 @@ Object::~Object() {
 
 Position Object::getPosition() {
 
-    _mutex.lockForRead();
+    _mutex->lockForRead();
 
     Position retn = _position;
 
-    _mutex.unlock();
+   // _mutex.unlock();
 
     return retn;
 
@@ -39,11 +38,11 @@ Position Object::getPosition() {
 
 Velocity Object::getVelocity() {
 
-    _mutex.lockForRead();
+    //_mutex.lockForRead();
 
     Velocity retn = _velocity;
 
-    _mutex.unlock();
+   // _mutex.unlock();
 
     return retn;
 
@@ -51,11 +50,11 @@ Velocity Object::getVelocity() {
 
 Angle Object::getOrientation() {
 
-    _mutex.lockForRead();
+   // _mutex.lockForRead();
 
     Angle retn = _orientation;
 
-    _mutex.unlock();
+   // _mutex.unlock();
 
     return retn;
 
@@ -68,11 +67,11 @@ void Object::setFilterTimes(double time){
 
 double Object::getConfidence() {
 
-    _mutex.lockForRead();
+    //_mutex.lockForRead();
 
     double retn = _confidence;
 
-    _mutex.unlock();
+   // _mutex.unlock();
 
     return retn;
 
@@ -80,7 +79,7 @@ double Object::getConfidence() {
 
 void Object::update(double confidence, const Position &pos, const Angle &ori) {
 
-    _mutex.lockForWrite();
+   // _mutex.lockForWrite();
     
     _confidence = confidence;
 
@@ -96,7 +95,7 @@ void Object::update(double confidence, const Position &pos, const Angle &ori) {
             _orientation.setValue(ori.value()); // dou update no angulo do robo
         }
     }
-    _mutex.unlock();
+    //_mutex.unlock();
 
 }
 

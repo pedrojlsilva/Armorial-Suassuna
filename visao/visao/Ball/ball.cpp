@@ -1,5 +1,5 @@
 
-#include "Ball.h"
+#include "ball.h"
 
 QString Ball::name() {
 
@@ -7,7 +7,7 @@ QString Ball::name() {
 
 }
 
-Ball::Ball(bool debugDetection) : Object() {
+Ball::Ball(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter, bool debugDetection) :  Object(enableLossFilter, enableKalmanFilter, enableNoiseFilter){
 
     _debugDetection = debugDetection;
 

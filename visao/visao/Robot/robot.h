@@ -4,7 +4,7 @@
 
 #include <types/object.h>
 
-class Robot : public Object {
+class Robot:public Object{
 
 private:
 
@@ -14,21 +14,21 @@ private:
     quint8 _robotId;
     bool _debugDetection;
 
+
+
+public:
     enum Color
     {
         YELLOW,
         BLUE
     };
 
-    Color _color;
+    quint8 _color;
 
-public:
-
-    Robot(Color color, quint8 teamId, quint8 robotId, bool debugDetection=true);
-
+    Robot(quint8 color, quint8 teamId, quint8 robotId, bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=true);
     virtual ~Robot();
 
-    Color color() const { return _color; }
+    quint8 color() const { return _color; }
     quint8 teamId() const { return _teamId; }
     quint8 robotId() const { return _robotId; }
     Position getRobotPosition();

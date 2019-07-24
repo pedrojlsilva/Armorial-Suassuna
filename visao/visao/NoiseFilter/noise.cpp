@@ -1,15 +1,17 @@
 /* noise filter methods */
 
+#include "noise.h"
+
 void Noise::setFilterTime(double time){
 	this->filterTime = time;
 }
 
 void Noise::setOff(){
-	this->initialized = false;
+    initialized = false;
 }
 
 bool Noise::isInitialized(){
-	return this->initialized;
+    return initialized;
 }
 
 void Noise::initCounter(){

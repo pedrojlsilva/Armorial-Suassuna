@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOISE_H
+#define NOISE_H
 #include <time.h>
 
 class Noise{
@@ -13,3 +14,5 @@ class Noise{
 		double temporizer;
 		bool initialized;
 };
+
+#endif

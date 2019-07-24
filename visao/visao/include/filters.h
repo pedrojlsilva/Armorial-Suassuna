@@ -2,7 +2,7 @@
 #define FILTERS_H
 
 #include "KalmanFilter/kalman.hpp"
-#include "LossFilter/Loss.hpp"
-#include "NoiseFilter/Noise.hpp"
+#include "LossFilter/loss.h"
+#include "NoiseFilter/noise.h"
 
 #endif // FILTERS_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LOSS_H
+#define LOSS_H
 #include <time.h>
 
 class Loss{
@@ -9,3 +10,4 @@ class Loss{
 		double filterTime;
         double temporizer;
 };
+#endif

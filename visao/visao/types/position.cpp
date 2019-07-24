@@ -7,6 +7,10 @@ Position::Position() {
 
 }
 
+Position::~Position(){
+
+}
+
 Position::Position(bool known, float newX, float newY) {
 
     (known == true) ? setPosition(newX, newY) : setUnknown();

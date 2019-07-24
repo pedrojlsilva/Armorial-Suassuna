@@ -1,5 +1,5 @@
 
-#include "Loss.hpp"
+#include "loss.h"
 
 /* loss filter methods */
 

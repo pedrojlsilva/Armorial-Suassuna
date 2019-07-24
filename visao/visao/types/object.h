@@ -5,38 +5,20 @@
 #include <QReadWriteLock>
 #include "types/types.h"
 #include "include/filters.h"
+#include <QReadWriteLock>
 
 
 class Object
 {
-public:
-    Object();
-    ~Object();
-    void update(double confidence, const Position &pos, const Angle &ori=Angle(false, 0));
-
-
-    Position _position = Position();
-    Velocity _velocity =  Velocity();
-    Angle _orientation = Angle();
-    double getConfidence();
-    Position getPosition();
-    Velocity getVelocity();
-    Angle getOrientation();
-    void setFilterTimes(double time);
-    bool enableLoss;
-    bool enableNoise;
-    bool enableKalman;
-
-
-
-    void setUnknown();
 
 private:
-    // Confidence info
+    bool enableKalman;
+    bool enableLoss;
+    bool enableNoise;
     double _confidence;
 
     // Thread-safe mutex
-    QReadWriteLock _mutex;
+    QReadWriteLock *_mutex = new QReadWriteLock();
 
     // Auxiliary flags
     bool _zero;
@@ -51,9 +33,29 @@ private:
 
     //ObjectVelocity _objVel;
 
-    // Noise filter
 
-    bool _unsafe;
+
+public:
+    Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter);
+    virtual ~Object();
+    void update(double confidence, const Position &pos, const Angle &ori=Angle(false, 0));
+
+
+    Position _position = Position();
+    Velocity _velocity =  Velocity();
+    Angle _orientation = Angle();
+    double getConfidence();
+    Position getPosition();
+    Velocity getVelocity();
+    Angle getOrientation();
+    void setFilterTimes(double time);
+    void setKalman(bool enable){enableKalman = enable;}
+    void setLoss(bool enable){enableLoss = enable;}
+    void setNoise(bool enable){enableNoise = enable;}
+    void setUnknown();
+
+
+
 
 };
 
