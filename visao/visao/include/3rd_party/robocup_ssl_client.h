@@ -41,6 +41,7 @@ protected:
   int _port;
   string _net_address;
   string _net_interface;
+  SSL_WrapperPacket packetReceived;
 public:
     RoboCupSSLClient(int port = 10002,
                      string net_ref_address="224.5.23.2",
@@ -50,6 +51,7 @@ public:
     bool open(bool blocking=false);
     void close();
     bool receive(SSL_WrapperPacket & packet);
+    SSL_WrapperPacket getPacket();
 
 };
 

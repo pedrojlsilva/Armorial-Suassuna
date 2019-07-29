@@ -69,11 +69,16 @@ bool RoboCupSSLClient::receive(SSL_WrapperPacket & packet) {
   Net::Address src;
   int r=0;
   r = mc.recv(in_buffer,MaxDataGramSize,src);
+  packetReceived = packet;
   if (r>0) {
     fflush(stdout);
     //decode packet:
     return packet.ParseFromArray(in_buffer,r);
   }
   return false;
+}
+
+SSL_WrapperPacket RoboCupSSLClient::getPacket(){
+    return packetReceived;
 }
 

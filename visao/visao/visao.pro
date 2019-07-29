@@ -30,7 +30,10 @@ SOURCES += \
     vision.cpp \
     include/3rd_party/messages_robocup_ssl_detection.pb.cc \
     include/3rd_party/netraw.cpp \
-    include/3rd_party/robocup_ssl_client.cpp
+    include/3rd_party/robocup_ssl_client.cpp \
+    include/3rd_party/messages_robocup_ssl_geometry.pb.cc \
+    include/3rd_party/messages_robocup_ssl_refbox_log.pb.cc \
+    include/3rd_party/messages_robocup_ssl_wrapper.pb.cc
 
 
 

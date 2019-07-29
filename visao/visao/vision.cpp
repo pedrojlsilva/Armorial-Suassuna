@@ -189,7 +189,7 @@ int main(){
     // opening ssl vision client
     RoboCupSSLClient client;
     client.open(true);
-    //SSL_WrapperPacket packet;
+    SSL_WrapperPacket packet;
 
     // samico packet
     //pacote robotsInfo;
@@ -199,14 +199,14 @@ int main(){
     //if(bateriasRandomicas) gerarBaterias(&robotsInfo);
 
     while(true){
-//        if(client.receive(packet)){
-//            if(packet.has_detection()){
-//               SSL_DetectionFrame detection = packet.detection();
+        if(client.receive(packet)){
+            if(packet.has_detection()){
+               SSL_DetectionFrame detection = packet.detection();
 //                setRobotsInfo(detection, blueRobots, yellowRobots, &robotsInfo);
 //                setBallInfo(detection, *ball, &robotsInfo);
 //                send(new_socket, &robotsInfo, sizeof(pacote), 0);
-//            }
-//        }
+            }
+        }
     }
 }
 
