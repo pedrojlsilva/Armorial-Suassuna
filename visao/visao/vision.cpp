@@ -4,6 +4,8 @@
 #include <vector>
 #include "Ball/ball.h"
 #include "Robot/robot.h"
+#include "include/3rd_party/robocup_ssl_client.h"
+#include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
 
 
 #define PORT 8881
@@ -185,8 +187,8 @@ void debugPacket(pacote robosInfo){
 
 int main(){
     // opening ssl vision client
-    //RoboCupSSLClient client;
-    //client.open(true);
+    RoboCupSSLClient client;
+    client.open(true);
     //SSL_WrapperPacket packet;
 
     // samico packet
@@ -199,7 +201,7 @@ int main(){
     while(true){
 //        if(client.receive(packet)){
 //            if(packet.has_detection()){
-//                SSL_DetectionFrame detection = packet.detection();
+//               SSL_DetectionFrame detection = packet.detection();
 //                setRobotsInfo(detection, blueRobots, yellowRobots, &robotsInfo);
 //                setBallInfo(detection, *ball, &robotsInfo);
 //                send(new_socket, &robotsInfo, sizeof(pacote), 0);
