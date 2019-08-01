@@ -49,3 +49,5 @@ compile_commands.json
 
 # QtCreator local machine specific files for imported projects
 *creator.user*
+
+/home/pedro_jorge/Documentos/Projetos/Armorial-Suassuna/visao/visao/include/3rd_party/*.pb.*
