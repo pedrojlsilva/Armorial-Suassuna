@@ -8,7 +8,7 @@ CONFIG -= app_bundle
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-LIBS *= -lprotobuf -lGLU
+LIBS *= -lprotobuf -lGLU -pthread -lsfml-graphics -lsfml-window -lsfml-system -Ofast
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -33,7 +33,10 @@ SOURCES += \
     include/3rd_party/robocup_ssl_client.cpp \
     include/3rd_party/messages_robocup_ssl_geometry.pb.cc \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.cc \
-    include/3rd_party/messages_robocup_ssl_wrapper.pb.cc
+    include/3rd_party/messages_robocup_ssl_wrapper.pb.cc \
+    samico.cpp \
+    frame.cpp \
+    types/frame.cpp
 
 
 
@@ -52,6 +55,9 @@ DISTFILES += \
     include/3rd_party/protobuf/messages_robocup_ssl_wrapper.proto \
     include/3rd_party/protobuf/messages_robocup_ssl_geometry.proto \
     include/3rd_party/protobuf/protobuf.sh \
+    utils/arial.ttf \
+    utils/bluerobot.png \
+    utils/yellowrobot.png
 
 
 
@@ -77,5 +83,8 @@ HEADERS += \
     include/3rd_party/messages_robocup_ssl_detection.pb.h \
     include/3rd_party/messages_robocup_ssl_geometry.pb.h \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.h \
-    include/3rd_party/messages_robocup_ssl_refbox_log.pb.h
+    include/3rd_party/messages_robocup_ssl_refbox_log.pb.h \
+    samico.h \
+    frame.h \
+    types/frame.h
 

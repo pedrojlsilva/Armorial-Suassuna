@@ -3,6 +3,16 @@
 
 /* Robot methods */
 
+quint8 Robot::getBattery() const
+{
+    return _battery;
+}
+
+void Robot::setBattery(const quint8 &battery)
+{
+    _battery = battery;
+}
+
 Robot::Robot(quint8 color, quint8 teamId, quint8 robotId, bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter, bool debugDetection) :  Object(enableLossFilter, enableKalmanFilter, enableNoiseFilter)
 {
 

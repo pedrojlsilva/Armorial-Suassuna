@@ -23,25 +23,6 @@
 using namespace std;
 using namespace chrono;
 
-//samico packet;
-int server_fd, new_socket, opt = 1;
-struct sockaddr_in address;
-int addrlen = sizeof(address);
-
-typedef struct{
-    int id;
-    double x, y, angle;
-} robot_coords;
-
-typedef struct{
-    char qt_blue;
-    char qt_yellow;
-    char camera_id;
-    unsigned char battery[2][maxRobots];
-    robot_coords robots_blue[maxRobots];
-    robot_coords robots_yellow[maxRobots];
-    pair<double, double> ball;
-} pacote;
 
 /* variables */
 
@@ -78,36 +59,7 @@ void initBall(){
 
 }
 
-void initSamicoSocket(){
-    // criação do socket
-    if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
-        cout << "Erro na criação do socket" << endl;
-        exit(-1);
-    }
-    if(setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){
-        cout << "Erro na setsockopt" << endl;
-        exit(-1);
-    }
-    // setando o endereco e as portas
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
 
-    // tentando bindar o endereco (pegar prioridade)
-    if(bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0){
-        printf("Bind error.\n");
-        exit(-1);
-    }
-    // verificando se foi possivel dar o listen
-    if(listen(server_fd, 3) < 0){
-        printf("Listen error.\n");
-        exit(-1);
-    }
-    if((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0){
-        printf("Connection accept error.\n");
-        exit(-1);
-    }
-}
 
 void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &blueRobots, vector<Robot> &yellowRobots, pacote *robotsInfo){
     uint8_t qt_blueRobots = detection.robots_blue_size();

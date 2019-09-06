@@ -13,6 +13,7 @@ private:
     quint8 _teamId;
     quint8 _robotId;
     bool _debugDetection;
+    quint8 _baterry;
 
 
 
