@@ -1,5 +1,7 @@
 #include "samico.h"
 
+using namespace sf;
+
 Samico::Samico()
 {
     // fundo do samico
@@ -68,9 +70,9 @@ Samico::Samico()
     }
 
     // bola
-    CircleShape ball(ballRadius);
-    ball.setFillColor(Color(255, 69, 0, 255));
-    ball.setPointCount(circlePrecision);
+    ;
+    ball->setFillColor(Color(255, 69, 0, 255));
+    ball->setPointCount(circlePrecision);
 
     // configurações e criação da tela principal
     settings.antialiasingLevel = 8;
@@ -83,29 +85,29 @@ void Samico::drawBall(){
     if(frame_received->_ball.getBallPosition().isValid()){
         double ballx = abs(((frame_received->_ball.getBallPosition().getX())+6000.0)/(6000.0/540.0));
         double bally = abs(((frame_received->_ball.getBallPosition().getY())-4700)/(4700.0/360.0));
-        ball.setPosition(ballx - ballRadius, bally - ballRadius);
-        window->draw(ball);
+        ball->setPosition(ballx - ballRadius, bally - ballRadius);
+        window->draw(*ball);
     }
 }
 
 void Samico::drawRobots(){
-    for(int x = 0; x < info_packet.qt_blue; x++){
-        double t = info_packet.robots_blue[x].angle, newx, newy;
+    for(int x = 0; x < frame_received->_qt_blue; x++){
+        double t = frame_received->_blueRobots[x].getOrientation().value(), newx, newy;
         char robotNumber[2];
-        sprintf(robotNumber, "%d", info_packet.robots_blue[x].id);
+        sprintf(robotNumber, "%d", frame_received->_blueRobots[x].robotId());
         blueText[x].setString(robotNumber);
 
-        newx = abs(info_packet.robots_blue[x].x + 6000)/(6000.0/540.0);
-        newy = abs(info_packet.robots_blue[x].y - 4700)/(4700.0/360.0);
+        newx = abs(frame_received->_blueRobots[x].getRobotPosition().getX() + 6000)/(6000.0/540.0);
+        newy = abs(frame_received->_blueRobots[x].getRobotPosition().getY() - 4700)/(4700.0/360.0);
 
         Vertex robotTriangle[] =
         {
-            Vertex(Vector2f(newx, newy - (2 * robotRadius))),
-            Vertex(Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx, newy - (2 * robotRadius))),
-            Vertex(Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius))
+            Vertex(sf::Vector2f(newx, newy - (2 * robotRadius))),
+            Vertex(sf::Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx, newy - (2 * robotRadius))),
+            Vertex(sf::Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius))
         };
         for(int x = 0; x < 6; x++) robotTriangle[x].color = Color::White;
 
@@ -114,30 +116,30 @@ void Samico::drawRobots(){
 
         blueText[x].setPosition(newx - 3, newy - 7);
 
-        if(!info_packet.robots_blue[x].isLoss){
+        if(!frame_received->_blueRobots[x].getRobotPosition().isValid()){
             window->draw(blueSprite[x]);
             window->draw(blueText[x]);
             window->draw(robotTriangle, 6, Lines);
         }
     }
 
-    for(int x = 0; x < info_packet.qt_yellow; x++){
-        double t = info_packet.robots_yellow[x].angle, newx, newy;
+    for(int x = 0; x < frame_received->_qt_yellow; x++){
+        double t = frame_received->_yellowRobots[x].getOrientation().value(), newx, newy;
         char robotNumber[2];
-        sprintf(robotNumber, "%d", info_packet.robots_yellow[x].id);
+        sprintf(robotNumber, "%d", frame_received->_yellowRobots[x].robotId());
         yellowText[x].setString(robotNumber);
 
-        newx = abs(info_packet.robots_yellow[x].x + 6000)/(6000.0/540.0);
-        newy = abs(info_packet.robots_yellow[x].y - 4700)/(4700.0/360.0);
+        newx = abs(frame_received->_yellowRobots[x].getRobotPosition().getX() + 6000)/(6000.0/540.0);
+        newy = abs(frame_received->_yellowRobots[x].getRobotPosition().getY() - 4700)/(4700.0/360.0);
 
         Vertex robotTriangle[] =
         {
-            Vertex(Vector2f(newx, newy - (2 * robotRadius))),
-            Vertex(Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx, newy - (2 * robotRadius))),
-            Vertex(Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
-            Vertex(Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius))
+            Vertex(sf::Vector2f(newx, newy - (2 * robotRadius))),
+            Vertex(sf::Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx, newy - (2 * robotRadius))),
+            Vertex(sf::Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx - (sqrt(3)*robotRadius), newy + robotRadius)),
+            Vertex(sf::Vector2f(newx + (sqrt(3)*robotRadius), newy + robotRadius))
         };
         for(int x = 0; x < 6; x++) robotTriangle[x].color = Color::White;
 
@@ -146,7 +148,7 @@ void Samico::drawRobots(){
 
         yellowText[x].setPosition(newx - 3, newy - 7);
 
-        if(!info_packet.robots_yellow[x].isLoss){
+        if(!frame_received->_yellowRobots[x].getRobotPosition().isValid()){
             window->draw(yellowSprite[x]);
             window->draw(yellowText[x]);
             window->draw(robotTriangle, 6, Lines);

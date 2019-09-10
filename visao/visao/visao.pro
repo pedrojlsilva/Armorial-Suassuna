@@ -8,7 +8,7 @@ CONFIG -= app_bundle
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-LIBS *= -lprotobuf -lGLU -pthread -lsfml-graphics -lsfml-window -lsfml-system -Ofast
+LIBS *= -lprotobuf -lGLU -pthread -lsfml-graphics -lsfml-window -lsfml-system
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -35,7 +35,6 @@ SOURCES += \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.cc \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.cc \
     samico.cpp \
-    frame.cpp \
     types/frame.cpp
 
 
@@ -85,6 +84,5 @@ HEADERS += \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.h \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.h \
     samico.h \
-    frame.h \
     types/frame.h
 

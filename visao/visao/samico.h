@@ -39,6 +39,7 @@ private:
 
 private:
     Frame *frame_received = new Frame();
+    CircleShape *ball = new CircleShape(ballRadius);
     RectangleShape *fundoSamico;
     Font font;
     CircleShape *circuloCentral;

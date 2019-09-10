@@ -13,8 +13,8 @@
 #include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
 
 
-#define PORT 8881
-#define IP "127.0.0.1"
+//#define PORT 8881
+//#define IP "127.0.0.1"
 #define qt_robosTime 8
 #define tempoFiltros 300
 #define maxRobots 8
@@ -38,7 +38,7 @@ vector<Robot> blueRobots;
 vector<Robot> yellowRobots;
 Ball *ball;
 Robot *aux;
-Samico *samico;
+//Samico *samico;
 
 
 void initRobots(){
@@ -78,8 +78,6 @@ void setRobotsInfo(SSL_DetectionFrame &detection, vector<Robot> &blueRobots, vec
     robotsInfo->_qt_blue=qt_blueRobots;
     robotsInfo->_qt_yellow=qt_yellowRobots;
     robotsInfo->_camera_id=camera_id;
-
-
 
 
     for(uint8_t x = 0; x < qt_blueRobots; x++){
@@ -152,12 +150,12 @@ int main(){
     client.open(true);
     SSL_WrapperPacket packet;
 
-    //samico packet
-//    pacote robotsInfo;
+
     initRobots();
     initBall();
-//    initSamicoSocket();
-    if(bateriasRandomicas) gerarBaterias();
+    if(bateriasRandomicas) {
+        gerarBaterias();
+    }
 
     while(true){
         if(client.receive(packet)){
@@ -165,9 +163,8 @@ int main(){
                SSL_DetectionFrame detection = packet.detection();
                 setRobotsInfo(detection, blueRobots, yellowRobots);
                 setBallInfo(detection);
-                samico->setPacket();
-                samico->drawWindow();
-//                send(new_socket, &robotsInfo, sizeof(pacote), 0);
+//                samico->setPacket();
+//                samico->drawWindow();
             }
         }
     }
