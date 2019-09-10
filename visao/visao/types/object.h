@@ -38,7 +38,7 @@ private:
 public:
     Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter);
     virtual ~Object();
-    void update(double confidence, const Position &pos, const Angle &ori=Angle(false, 0));
+    void update(double confidence, Position pos, Angle ori);
 
 
     Position _position = Position();

@@ -10,10 +10,10 @@ private:
 
     // Robot info
 
-    quint8 _teamId;
-    quint8 _robotId;
+    quint32 _teamId;
+    quint32 _robotId;
     bool _debugDetection;
-    quint8 _baterry;
+    int _battery;
 
 
 
@@ -26,12 +26,14 @@ public:
 
     quint8 _color;
 
-    Robot(quint8 color, quint8 teamId, quint8 robotId, bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=true);
+    Robot(quint8 color, quint32 teamId, quint32 robotId, bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=true);
     virtual ~Robot();
 
     quint8 color() const { return _color; }
-    quint8 teamId() const { return _teamId; }
-    quint8 robotId() const { return _robotId; }
+    quint32 teamId() const { return _teamId; }
+    void setTeamId(quint8 team_id) { _teamId=team_id; }
+    quint32 robotId() const { return _robotId; }
+    void setRobotId(quint32 robot_id)  { _robotId=robot_id;}
     Position getRobotPosition();
     Velocity getRobotVelocity();
 
@@ -39,6 +41,8 @@ public:
 
     //void updateToSensor();
 
+    int getBattery() const;
+    void setBattery(int battery);
 };
 
 #endif // ROBOT_H

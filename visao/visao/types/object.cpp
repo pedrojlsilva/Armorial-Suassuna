@@ -77,7 +77,7 @@ double Object::getConfidence() {
 
 }
 
-void Object::update(double confidence, const Position &pos, const Angle &ori) {
+void Object::update(double confidence, Position pos, Angle ori) {
 
    // _mutex.lockForWrite();
     

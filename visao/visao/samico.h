@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include "Ball/ball.h"
 #include "Robot/robot.h"
+#include "types/frame.h"
 
 using namespace std;
 using namespace sf;
@@ -27,6 +28,9 @@ public:
     Samico();
     void setPacket();
     void drawWindow();
+    void setFrame(Frame newFrame){
+        *frame_received = newFrame;
+    }
 
 private:
     void drawBall();
@@ -34,6 +38,7 @@ private:
 
 
 private:
+    Frame *frame_received = new Frame();
     RectangleShape *fundoSamico;
     Font font;
     CircleShape *circuloCentral;

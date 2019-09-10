@@ -80,9 +80,9 @@ Samico::Samico()
 }
 
 void Samico::drawBall(){
-    if(!info_packet.isBallLoss){
-        double ballx = abs(((info_packet.ball.first)+6000)/(6000.0/540.0));
-        double bally = abs(((info_packet.ball.second)-4700)/(4700.0/360.0));
+    if(frame_received->_ball.getBallPosition().isValid()){
+        double ballx = abs(((frame_received->_ball.getBallPosition().getX())+6000.0)/(6000.0/540.0));
+        double bally = abs(((frame_received->_ball.getBallPosition().getY())-4700)/(4700.0/360.0));
         ball.setPosition(ballx - ballRadius, bally - ballRadius);
         window->draw(ball);
     }
