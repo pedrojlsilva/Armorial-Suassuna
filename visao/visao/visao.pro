@@ -34,8 +34,8 @@ SOURCES += \
     include/3rd_party/messages_robocup_ssl_geometry.pb.cc \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.cc \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.cc \
-    samico.cpp \
-    types/frame.cpp
+    types/frame.cpp \
+    samico.cpp
 
 
 
@@ -83,6 +83,6 @@ HEADERS += \
     include/3rd_party/messages_robocup_ssl_geometry.pb.h \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.h \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.h \
-    samico.h \
-    types/frame.h
+    types/frame.h \
+    samico.h
 

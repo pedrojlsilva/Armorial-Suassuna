@@ -13,7 +13,7 @@ private:
 
 public:
 
-    Ball(bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=true);
+    Ball(bool enableLossFilter=true, bool enableKalmanFilter=true, bool enableNoiseFilter=true, bool debugDetection=false);
 
     QString name();
 

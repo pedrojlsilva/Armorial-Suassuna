@@ -2,9 +2,7 @@
 #define SAMICO_H
 
 #include <bits/stdc++.h>
-#include <stdlib.h>
-#include <thread>
-#include <unistd.h>
+//#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <SFML/Graphics.hpp>
@@ -13,7 +11,6 @@
 #include "types/frame.h"
 
 using namespace std;
-using namespace sf;
 
 #define maxRobots 8
 #define circlePrecision 100
@@ -22,15 +19,15 @@ using namespace sf;
 #define robotRadius 9.f
 
 
+
+
 class Samico
 {
 public:
     Samico();
-    void setPacket();
     void drawWindow();
-    void setFrame(Frame newFrame){
-        *frame_received = newFrame;
-    }
+    void setFrame(Frame *newFrame);
+
 
 private:
     void drawBall();
@@ -38,65 +35,64 @@ private:
 
 
 private:
-    Frame *frame_received = new Frame();
-    CircleShape *ball = new CircleShape(ballRadius);
-    RectangleShape *fundoSamico;
-    Font font;
-    CircleShape *circuloCentral;
-    Image blueRobots;
-    Image yellowRobots;
-    Texture blueTexture;
-    Texture yellowTexture;
-    Text blueText[maxRobots];
-    Sprite blueSprite[maxRobots];
+    Frame *frame_received=new Frame(8,100);
+    sf::CircleShape *ball = new sf::CircleShape(ballRadius);
+    sf::RectangleShape *fundoSamico;
+    sf::Font font;
+    sf::CircleShape *circuloCentral;
+    sf::Image blueRobots;
+    sf::Image yellowRobots;
+    sf::Texture blueTexture;
+    sf::Texture yellowTexture;
+    sf::Text blueText[maxRobots];
+    sf::Sprite blueSprite[maxRobots];
 
 
-    Text yellowText[maxRobots];
-    Sprite yellowSprite[maxRobots];
-    ContextSettings settings;
+    sf::Text yellowText[maxRobots];
+    sf::Sprite yellowSprite[maxRobots];
+    sf::ContextSettings settings;
 
 
-    RenderWindow *window;
+    sf::RenderWindow *window;
 
-    Vertex linhasExternas[10] =
+    sf::Vertex linhasExternas[10] =
     {
-        Vertex(Vector2f(10.f, 10.f)),
-        Vertex(Vector2f(1070.f, 10.f)),
-        Vertex(Vector2f(1070.f, 10.f)),
-        Vertex(Vector2f(1070.f, 710.f)),
-        Vertex(Vector2f(1070.f, 710.f)),
-        Vertex(Vector2f(10.f, 710.f)),
-        Vertex(Vector2f(10.f, 710.f)),
-        Vertex(Vector2f(10.f, 10.f)),
-        Vertex(Vector2f(10.f, 360.f)),
-        Vertex(Vector2f(1070.f, 360.f))
+        sf::Vertex(sf::Vector2f(10.f, 10.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 10.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 10.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 710.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 710.f)),
+        sf::Vertex(sf::Vector2f(10.f, 710.f)),
+        sf::Vertex(sf::Vector2f(10.f, 710.f)),
+        sf::Vertex(sf::Vector2f(10.f, 10.f)),
+        sf::Vertex(sf::Vector2f(10.f, 360.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 360.f))
     };
 
-    Vertex linhaMeio[2] =
+    sf::Vertex linhaMeio[2] =
     {
-        Vertex(Vector2f(540.f, 10.f)),
-        Vertex(Vector2f(540.f, 710.f))
+        sf::Vertex(sf::Vector2f(540.f, 10.f)),
+        sf::Vertex(sf::Vector2f(540.f, 710.f))
     };
 
-    Vertex golEsquerdo[6] =
+    sf::Vertex golEsquerdo[6] =
     {
-        Vertex(Vector2f(10.f, 280.f)),
-        Vertex(Vector2f(110.f, 280.f)),
-        Vertex(Vector2f(10.f, 430.f)),
-        Vertex(Vector2f(110.f, 430.f)),
-        Vertex(Vector2f(110.f, 280.f)),
-        Vertex(Vector2f(110.f, 430.f))
+        sf::Vertex(sf::Vector2f(10.f, 280.f)),
+        sf::Vertex(sf::Vector2f(110.f, 280.f)),
+        sf::Vertex(sf::Vector2f(10.f, 430.f)),
+        sf::Vertex(sf::Vector2f(110.f, 430.f)),
+        sf::Vertex(sf::Vector2f(110.f, 280.f)),
+        sf::Vertex(sf::Vector2f(110.f, 430.f))
     };
 
-    Vertex golDireito[6] =
+    sf::Vertex golDireito[6] =
     {
-        Vertex(Vector2f(1070.f, 280.f)),
-        Vertex(Vector2f(960.f, 280.f)),
-        Vertex(Vector2f(1070.f, 430.f)),
-        Vertex(Vector2f(960.f, 430.f)),
-        Vertex(Vector2f(960.f, 280.f)),
-        Vertex(Vector2f(960.f, 430.f))
+        sf::Vertex(sf::Vector2f(1070.f, 280.f)),
+        sf::Vertex(sf::Vector2f(960.f, 280.f)),
+        sf::Vertex(sf::Vector2f(1070.f, 430.f)),
+        sf::Vertex(sf::Vector2f(960.f, 430.f)),
+        sf::Vertex(sf::Vector2f(960.f, 280.f)),
+        sf::Vertex(sf::Vector2f(960.f, 430.f))
     };
 };
-
 #endif // SAMICO_H
