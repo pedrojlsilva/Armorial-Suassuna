@@ -45,9 +45,15 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
     if(qt_blueRobots != 0) robotsInfo->_qt_blue=qt_blueRobots;
     if(qt_yellowRobots != 0) robotsInfo->_qt_yellow=qt_yellowRobots;
     robotsInfo->_camera_id=camera_id;
-    cout<<"amarelos:   "<< robotsInfo->_qt_blue<<std::endl;
-    cout<<"azuis:      "<< robotsInfo->_qt_yellow<<std::endl;
+    cout<<"amarelos:   "<< robotsInfo->_qt_yellow<<std::endl;
+    cout<<"azuis:      "<< robotsInfo->_qt_blue<<std::endl;
     cout << "la no samico ta: " << robotsInfo->_qt_blue << " " << robotsInfo->_qt_yellow << endl;
+
+    // loop para checar se o robo esta perdido ou ruidoso (invalidando a posicao)
+    for(int x = 0; x < qt_robosTime; x++){
+        if(robotsInfo->_blueRobots[x].checkLoss() || !robotsInfo->_blueRobots[x].checkNoise()) robotsInfo->_blueRobots[x]._position.setInvalid();
+    }
+
     for(int x = 0; x < qt_blueRobots; x++){
         quint32 id = detection.robots_blue(x).robot_id();
 
@@ -57,7 +63,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
 
-        if(robotsInfo->_blueRobots[id]._position.isValid() || (robotsInfo->_blueRobots[id].checkNoise() && robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
+        if(robotsInfo->_blueRobots[id]._position.isValid() || (robotsInfo->_blueRobots[id].checkNoise() && !robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
             robotsInfo->_blueRobots[id].setRobotId(id);
             robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
         }
