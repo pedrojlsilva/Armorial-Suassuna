@@ -1,9 +1,14 @@
 /* noise filter methods */
 
 #include "noise.h"
+#include <stdio.h>
+
+Noise::Noise(){
+    filterTime = 300.0;
+}
 
 void Noise::setFilterTime(double time){
-	this->filterTime = time;
+    filterTime = time;
 }
 
 void Noise::setOff(){
@@ -20,8 +25,7 @@ void Noise::initCounter(){
 }
 
 bool Noise::noiseFilter(){
-
-	if(((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime){
+    if(((double)(clock() - temporizer)/100.0) >= filterTime){
 		return true;
 	}
 

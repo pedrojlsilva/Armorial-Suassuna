@@ -45,6 +45,8 @@ bool Position::isValid()   { return _isValid;   }
 
 void Position::setInvalid() { _isValid = false; }
 
+void Position::setValid() { _isValid = true; }
+
 void Position::setUnknown() {
 
     _unknown = true;

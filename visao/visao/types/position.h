@@ -16,6 +16,7 @@ public:
     bool isValid();
     void setUnknown();
     void setInvalid();
+    void setValid();
 
 
 private: //parameters

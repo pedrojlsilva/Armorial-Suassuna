@@ -4,15 +4,16 @@
 
 class Noise{
 	public:
+        Noise();
 		void initCounter();
 		void setOff();
 		bool isInitialized();
 		bool noiseFilter();
 		void setFilterTime(double time);
 	private:
-		double filterTime;
+        double filterTime = 300.0;
 		double temporizer;
-		bool initialized;
+        bool initialized = false;
 };
 
 #endif

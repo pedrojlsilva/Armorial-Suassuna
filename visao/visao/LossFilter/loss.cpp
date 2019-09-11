@@ -3,8 +3,12 @@
 
 /* loss filter methods */
 
+Loss::Loss(){
+    filterTime = 300.0;
+}
+
 void Loss::setFilterTime(double time){
-	this->filterTime = time;
+    filterTime = time;
 }
 
 bool Loss::lossFilter(bool update){
@@ -13,7 +17,7 @@ bool Loss::lossFilter(bool update){
         return false; 
     }
 
-	bool ret = (((double)(clock() - temporizer)/CLOCKS_PER_SEC) >= filterTime);
+    bool ret = (((double)(clock() - temporizer)/100.0) >= filterTime);
 	if(ret){
         temporizer = clock();
     }

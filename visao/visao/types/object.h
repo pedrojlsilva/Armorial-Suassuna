@@ -13,8 +13,8 @@ class Object
 
 private:
     bool enableKalman;
-    bool enableLoss;
-    bool enableNoise;
+    bool enableLoss = true;
+    bool enableNoise = true;
     double _confidence;
 
     // Thread-safe mutex
@@ -53,6 +53,8 @@ public:
     void setLoss(bool enable){enableLoss = enable;}
     void setNoise(bool enable){enableNoise = enable;}
     void setUnknown();
+    bool checkNoise();
+    bool checkLoss();
 
 
 
