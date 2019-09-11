@@ -2,6 +2,7 @@
 #include <iostream>
 #include <netinet/in.h>
 #include <vector>
+#include <thread>
 #include "types/position.h"
 #include "types/angle.h"
 #include "Ball/ball.h"
@@ -104,7 +105,9 @@ void gerarBaterias(){
 }
 
 
-
+void samico_drawThread(){
+    samico->drawWindow();
+}
 
 int main(){
     // opening ssl vision client
@@ -112,6 +115,10 @@ int main(){
     client.open(true);
     SSL_WrapperPacket packet;
 
+    // samico draw thread
+    samico->getWindow()->setActive(false); // deactivating samico in main thread
+    thread first (samico_drawThread);
+    first.detach();
 
     if(bateriasRandomicas) {
         gerarBaterias();
@@ -124,7 +131,7 @@ int main(){
                 setRobotsInfo(detection);
                 setBallInfo(detection);
                 samico->setFrame(robotsInfo);
-                samico->drawWindow();
+                //samico->drawWindow();
             }
         }
     }

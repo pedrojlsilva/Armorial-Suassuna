@@ -27,11 +27,13 @@ public:
     Samico();
     void drawWindow();
     void setFrame(Frame *newFrame);
+    sf::RenderWindow *getWindow();
 
 
 private:
     void drawBall();
     void drawRobots();
+    void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoom);
 
 
 private:
@@ -47,13 +49,13 @@ private:
     sf::Text blueText[maxRobots];
     sf::Sprite blueSprite[maxRobots];
 
+    sf::RenderWindow *window;
 
     sf::Text yellowText[maxRobots];
     sf::Sprite yellowSprite[maxRobots];
     sf::ContextSettings settings;
 
-
-    sf::RenderWindow *window;
+    const double zoomAmount = 1.1;
 
     sf::Vertex linhasExternas[10] =
     {

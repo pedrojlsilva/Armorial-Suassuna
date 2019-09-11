@@ -1,5 +1,5 @@
 #include "samico.h"
-
+#include <thread>
 
 Samico::Samico()
 {
@@ -78,6 +78,7 @@ Samico::Samico()
 
     window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Armorial Samico", sf::Style::Default, settings);
     window->setFramerateLimit(60);
+
 }
 
 void Samico::drawBall(){
@@ -155,16 +156,58 @@ void Samico::drawRobots(){
     }
 }
 
+sf::RenderWindow *Samico::getWindow(){
+    return this->window;
+}
 
+void Samico::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoom){
+    const sf::Vector2f beforeCoord{ window->mapPixelToCoords(pixel) };
+    sf::View view{ window->getView() };
+    view.zoom(zoom);
+    window->setView(view);
+    const sf::Vector2f afterCoord{ window->mapPixelToCoords(pixel) };
+    const sf::Vector2f offsetCoords{ beforeCoord - afterCoord };
+    view.move(offsetCoords);
+    window->setView(view);
+}
 
 void Samico::drawWindow(){
-
+    bool moving = false;
+    sf::Vector2f oldPos;
     while(window->isOpen()){
-
         sf::Event event;
         while(window->pollEvent(event)){
             if(event.type == sf::Event::Closed){
                 window->close();
+            }
+            if (event.type == sf::Event::MouseWheelScrolled){
+                if (event.mouseWheelScroll.delta > 0)
+                    zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, window, (1.f / zoomAmount));
+                else if (event.mouseWheelScroll.delta < 0)
+                    zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, window, zoomAmount);
+            }
+            if(event.type == sf::Event::MouseButtonPressed){
+                if(event.mouseButton.button == 0){
+                    moving = true;
+                    oldPos = window->mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                }
+            }
+            if(event.type == sf::Event::MouseButtonReleased){
+                if(event.mouseButton.button == 0){
+                    moving = false;
+                }
+            }
+            if(event.type == sf::Event::MouseMoved){
+                if(moving){
+                    const sf::Vector2f newPos = window->mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+                    const sf::Vector2f deltaPos = oldPos - newPos;
+                    sf::View view = window->getView();
+
+                    view.setCenter(view.getCenter() + deltaPos);
+                    window->setView(view);
+
+                    oldPos = window->mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+                }
             }
         }
 
