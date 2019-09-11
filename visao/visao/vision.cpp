@@ -27,10 +27,6 @@ Position newPosition = Position();
 Angle newOrientation = Angle();
 
 
-
-
-
-
 /* variables */
 
 vector<Robot> blueRobots;
@@ -42,28 +38,24 @@ Samico *samico = new Samico();
 
 
 
-
-
-
-
 void setRobotsInfo(SSL_DetectionFrame &detection){
     int qt_blueRobots = detection.robots_blue_size();
     int qt_yellowRobots = detection.robots_yellow_size();
     quint32 camera_id = detection.camera_id();
-    robotsInfo->_qt_blue=qt_blueRobots;
-    robotsInfo->_qt_yellow=qt_yellowRobots;
+    if(qt_blueRobots != 0) robotsInfo->_qt_blue=qt_blueRobots;
+    if(qt_yellowRobots != 0) robotsInfo->_qt_yellow=qt_yellowRobots;
     robotsInfo->_camera_id=camera_id;
     cout<<"amarelos:   "<< robotsInfo->_qt_blue<<std::endl;
     cout<<"azuis:      "<< robotsInfo->_qt_yellow<<std::endl;
+    cout << "la no samico ta: " << robotsInfo->_qt_blue << " " << robotsInfo->_qt_yellow << endl;
     for(int x = 0; x < qt_blueRobots; x++){
-
         quint32 id = detection.robots_blue(x).robot_id();
-        if(!( id < maxRobots))
+
+        if(!(id < maxRobots)){
             throw std::runtime_error("ID error, check setRobotsInfo");
+        }
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
-
-        printf("x = %f| y = %f\n", pos_aux->getX(), pos_aux->getY());
 
         if(robotsInfo->_blueRobots[id]._position.isValid()){// se a posição for valida, ele passa para frame
             robotsInfo->_blueRobots[id].setRobotId(id);
@@ -84,7 +76,6 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
             robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
         }
     }
-
 }
 
 void setBallInfo(SSL_DetectionFrame &detection){

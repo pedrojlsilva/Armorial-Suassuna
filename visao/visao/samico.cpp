@@ -82,15 +82,16 @@ Samico::Samico()
 }
 
 void Samico::drawBall(){
-    if(frame_received->_ball.getBallPosition().isValid()){
+    //if(frame_received->_ball.getBallPosition().isValid()){
         double ballx = abs(((frame_received->_ball.getPosition().getX())+6000.0)/(6000.0/540.0));
         double bally = abs(((frame_received->_ball.getPosition().getY())-4700)/(4700.0/360.0));
         ball->setPosition(ballx - ballRadius, bally - ballRadius);
         window->draw(*ball);
-    }
+    //}
 }
 
 void Samico::drawRobots(){
+
     for(int x = 0; x < frame_received->_qt_blue; x++){
         double t = frame_received->_blueRobots[x].getOrientation().value(), newx, newy;
         char robotNumber[2];
@@ -116,11 +117,11 @@ void Samico::drawRobots(){
 
         blueText[x].setPosition(newx - 3, newy - 7);
 
-        if(frame_received->_blueRobots[x].getPosition().isValid()){
+        //if(frame_received->_blueRobots[x].getPosition().isValid()){
             window->draw(blueSprite[x]);
             window->draw(blueText[x]);
             window->draw(robotTriangle, 6, sf::Lines);
-        }
+        //}
     }
 
     for(int x = 0; x < frame_received->_qt_yellow; x++){
@@ -145,14 +146,13 @@ void Samico::drawRobots(){
 
         yellowSprite[x].setRotation((-t) * 57.2958); // conversao de rad para degree
         yellowSprite[x].setPosition(newx, newy);
-
         yellowText[x].setPosition(newx - 3, newy - 7);
 
-        if(frame_received->_yellowRobots[x].getPosition().isValid()){
+        //if(frame_received->_yellowRobots[x].getPosition().isValid()){
             window->draw(yellowSprite[x]);
             window->draw(yellowText[x]);
             window->draw(robotTriangle, 6, sf::Lines);
-        }
+        //}
     }
 }
 
