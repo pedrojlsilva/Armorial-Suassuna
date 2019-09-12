@@ -14,12 +14,16 @@ using namespace std;
 
 #define maxRobots 8
 #define circlePrecision 100
-#define ballRadius 6.f
-#define centralCirleRadius 50.f
-#define robotRadius 9.f
+#define ballRadius 50.f
+#define centralCirleRadius 500.f
+#define deslocamentoBorda 300.f
 
+#define max_x 7400
+#define max_y 10400
 
-
+#define robotRadius 110.f
+#define robotRealRadius 180.f
+#define border 1400
 
 class Samico
 {
@@ -42,12 +46,11 @@ private:
     sf::RectangleShape *fundoSamico;
     sf::Font font;
     sf::CircleShape *circuloCentral;
-    sf::Image blueRobots;
-    sf::Image yellowRobots;
-    sf::Texture blueTexture;
-    sf::Texture yellowTexture;
     sf::Text blueText[maxRobots];
     sf::Sprite blueSprite[maxRobots];
+
+    sf::CircleShape blueRobots_shape[maxRobots];
+    sf::CircleShape yellowRobots_shape[maxRobots];
 
     sf::RenderWindow *window;
 
@@ -59,42 +62,38 @@ private:
 
     sf::Vertex linhasExternas[10] =
     {
-        sf::Vertex(sf::Vector2f(10.f, 10.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 10.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 10.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 710.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 710.f)),
-        sf::Vertex(sf::Vector2f(10.f, 710.f)),
-        sf::Vertex(sf::Vector2f(10.f, 710.f)),
-        sf::Vertex(sf::Vector2f(10.f, 10.f)),
-        sf::Vertex(sf::Vector2f(10.f, 360.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 360.f))
+        sf::Vertex(sf::Vector2f(deslocamentoBorda, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(deslocamentoBorda, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(deslocamentoBorda, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(deslocamentoBorda, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f(deslocamentoBorda, max_y/2.0)),
+        sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, max_y/2.0))
     };
 
-    sf::Vertex linhaMeio[2] =
-    {
-        sf::Vertex(sf::Vector2f(540.f, 10.f)),
-        sf::Vertex(sf::Vector2f(540.f, 710.f))
-    };
+
 
     sf::Vertex golEsquerdo[6] =
     {
-        sf::Vertex(sf::Vector2f(10.f, 280.f)),
-        sf::Vertex(sf::Vector2f(110.f, 280.f)),
-        sf::Vertex(sf::Vector2f(10.f, 430.f)),
-        sf::Vertex(sf::Vector2f(110.f, 430.f)),
-        sf::Vertex(sf::Vector2f(110.f, 280.f)),
-        sf::Vertex(sf::Vector2f(110.f, 430.f))
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, 1000.f + deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, 1000.f + deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, 1000.f + deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, 1000.f + deslocamentoBorda))
     };
 
     sf::Vertex golDireito[6] =
     {
-        sf::Vertex(sf::Vector2f(1070.f, 280.f)),
-        sf::Vertex(sf::Vector2f(960.f, 280.f)),
-        sf::Vertex(sf::Vector2f(1070.f, 430.f)),
-        sf::Vertex(sf::Vector2f(960.f, 430.f)),
-        sf::Vertex(sf::Vector2f(960.f, 280.f)),
-        sf::Vertex(sf::Vector2f(960.f, 430.f))
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, max_y - (1000.f + deslocamentoBorda))),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, max_y - deslocamentoBorda)),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, max_y - (1000.f + deslocamentoBorda))),
+        sf::Vertex(sf::Vector2f((max_x/2.0) - 1000.f, max_y - (1000.f + deslocamentoBorda))),
+        sf::Vertex(sf::Vector2f((max_x/2.0) + 1000.f, max_y - (1000.f + deslocamentoBorda)))
     };
 };
 #endif // SAMICO_H
