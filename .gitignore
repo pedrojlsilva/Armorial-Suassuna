@@ -8,6 +8,8 @@
 *.so
 *.dll
 *.dylib
+.vscode/
+./build-visao-Desktop-Debug
 
 # Qt-es
 object_script.*.Release
@@ -47,3 +49,8 @@ compile_commands.json
 
 # QtCreator local machine specific files for imported projects
 *creator.user*
+
+*.pb.cc
+*.pb.h
+
+*.qmake.stash
