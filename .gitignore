@@ -8,7 +8,7 @@
 *.so
 *.dll
 *.dylib
-.vscode/
+.vscode/*
 ./build-visao-Desktop-Debug
 
 # Qt-es
