@@ -22,6 +22,7 @@ SOURCES += \
     KalmanFilter/matrix.cpp \
     LossFilter/loss.cpp \
     NoiseFilter/noise.cpp \
+	PathPlanning/path.cpp \
     Robot/robot.cpp \
     types/angle.cpp \
     types/object.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
     KalmanFilter/kalman.hpp \
     KalmanFilter/kalmanstate.h \
     KalmanFilter/matrix.h \
+	PathPlanning/path.h \
     LossFilter/loss.h \
     NoiseFilter/noise.h \
     Robot/robot.h \

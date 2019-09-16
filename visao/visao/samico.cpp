@@ -1,4 +1,5 @@
 #include "samico.h"
+#include<PathPlanning/path.h>
 #include <thread>
 
 Samico::Samico()
