@@ -12,9 +12,8 @@ pathPlanner::pathPlanner(int tam_row, int tam_col){
     closedList = (bool **) malloc(weight * sizeof(bool *));
     for(int x = 0; x < weight; x++){
         closedList[x] = (bool *) malloc(height * sizeof(bool));
+        memset(closedList[x], false, height);
     }
-
-    memset(closedList, false, sizeof(closedList));
 
     cellDetails = (cell **) malloc(weight * sizeof(cell *));
     for(int x = 0; x < weight; x++){
@@ -81,6 +80,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
 
     int i, j;
     
+    i = src.first, j = src.second;
     cellDetails[src.first][src.second].f = 0.0;
     cellDetails[src.first][src.second].g = 0.0;
     cellDetails[src.first][src.second].h = 0.0;
