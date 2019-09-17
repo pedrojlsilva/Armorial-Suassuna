@@ -147,6 +147,44 @@ void Samico::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoo
     window->setView(view);
 }
 
+void Samico::setColisions(int index_at, bool isBlue){
+    for(int y = 0; y < blueRobots_position.size(); y++){
+        if(!isBlue || index_at != y){
+            for(int i = blueRobots_position[y].first - robotRadius/5; i <= blueRobots_position[y].first + robotRadius/5; i++){
+                for(int j = blueRobots_position[y].second - robotRadius/5; j <= blueRobots_position[y].second + robotRadius/5; j++){
+                    mat[i][j] = false;
+                }
+            }
+        }
+    }
+    for(int y = 0; y < yellowRobots_position.size(); y++){
+        if(isBlue || index_at != y){
+            for(int i = yellowRobots_position[y].first - robotRadius/5; i <= yellowRobots_position[y].first + robotRadius/5; i++){
+                for(int j = yellowRobots_position[y].second - robotRadius/5; j <= yellowRobots_position[y].second + robotRadius/5; j++){
+                    mat[i][j] = false;
+                }
+            }
+        }
+    }
+}
+
+void Samico::unsetColisions(int index_at, bool isBlue){
+    for(int y = 0; y < blueRobots_position.size(); y++){
+        for(int i = blueRobots_position[y].first - robotRadius/5; i <= blueRobots_position[y].first + robotRadius/5; i++){
+            for(int j = blueRobots_position[y].second - robotRadius/5; j <= blueRobots_position[y].second + robotRadius/5; j++){
+                mat[i][j] = true;
+            }
+        }
+    }
+    for(int y = 0; y < yellowRobots_position.size(); y++){
+        for(int i = yellowRobots_position[y].first - robotRadius/5; i <= yellowRobots_position[y].first + robotRadius/5; i++){
+            for(int j = yellowRobots_position[y].second - robotRadius/5; j <= yellowRobots_position[y].second + robotRadius/5; j++){
+                mat[i][j] = true;
+            }
+        }
+    }
+}
+
 void Samico::drawWindow(){
     bool moving = false;
     sf::Vector2f oldPos;
@@ -199,24 +237,46 @@ void Samico::drawWindow(){
         drawBall();
         drawRobots();
 
-        // travando insanamente
         for(int x = 0; x < blueRobots_position.size(); x++){
-            cout << blueRobots_position[x].first << " " << blueRobots_position[x].second << endl;
-            cout << "To " << ball_position.first << " " << ball_position.second << endl;
+            if(x == 0){ // testando so p o robo zero
+            setColisions(x, true);
+
             pathing.aStar(mat, blueRobots_position[x], ball_position);
             vector<pair<int, int>> vec = pathing.getPath();
             int sz = vec.size();
-            cout << "size: " << sz << endl;
-            for(int y = 0; y < sz - 1; y++){
+            for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
                 sf::Vertex line[] =
                 {
                     sf::Vertex(sf::Vector2f((float) vec[y].first * 10.0, (float) vec[y].second * 10.0)),
-                    sf::Vertex(sf::Vector2f((float) vec[y+1].first * 10.0, (float) vec[y+1].second * 10.0)),
+                    sf::Vertex(sf::Vector2f((float) vec[y+deslocamentoLinhas].first * 10.0, (float) vec[y+deslocamentoLinhas].second * 10.0))
                 };
                 line[0].color = sf::Color::Red;
                 line[1].color = sf::Color::Red;
                 window->draw(line, 2, sf::Lines);
             }
+
+            unsetColisions(x, true);
+        }
+        }
+
+        for(int x = 0; x < yellowRobots_position.size(); x++){
+            setColisions(x, false);
+
+            pathing.aStar(mat, yellowRobots_position[x], ball_position);
+            vector<pair<int, int>> vec = pathing.getPath();
+            int sz = vec.size();
+            for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
+                sf::Vertex line[] =
+                {
+                    sf::Vertex(sf::Vector2f((float) vec[y].first * 10.0, (float) vec[y].second * 10.0)),
+                    sf::Vertex(sf::Vector2f((float) vec[y+deslocamentoLinhas].first * 10.0, (float) vec[y+deslocamentoLinhas].second * 10.0))
+                };
+                line[0].color = sf::Color::Red;
+                line[1].color = sf::Color::Red;
+                window->draw(line, 2, sf::Lines);
+            }
+
+            unsetColisions(x, false);
         }
 
         window->display();

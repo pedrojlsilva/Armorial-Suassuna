@@ -19,6 +19,8 @@ using namespace std;
 #define centralCirleRadius 500.f
 #define deslocamentoBorda 300.f
 
+#define deslocamentoLinhas 5
+
 #define max_x 7400
 #define max_y 10400
 
@@ -39,6 +41,8 @@ private:
     void drawBall();
     void drawRobots();
     void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoom);
+    void setColisions(int index_at, bool isBlue);
+    void unsetColisions(int index_at, bool isBlue);
 
 
 private:

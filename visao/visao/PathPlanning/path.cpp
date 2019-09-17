@@ -49,7 +49,6 @@ double pathPlanner::calculateHValue(int row, int col, pair<int, int> &dest){
 void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest){
     int row = dest.first;
     int col = dest.second;
-    path_vector.clear();
 
     stack<pair<int, int>> path;
 
@@ -73,6 +72,7 @@ void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest){
 }
 
 void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
+    path_vector.clear();
     if(!isValid(src.first, src.second)) return ;
     if(!isValid(dest.first, dest.second)) return ;
     if(!isUnblocked(grid, src.first, src.second)) return ;
