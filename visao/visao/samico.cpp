@@ -4,10 +4,10 @@
 Samico::Samico()
 {
 
-    mat = (bool **) malloc(max_y * sizeof(bool *));
-    for(int x = 0; x < max_y; x++){
-        mat[x] = (bool *) malloc(max_x * sizeof(bool));
-        memset(mat[x], 1, max_x);
+    mat = (bool **) malloc(max_y/10 * sizeof(bool *));
+    for(int x = 0; x < max_y/10; x++){
+        mat[x] = (bool *) malloc(max_x/10 * sizeof(bool));
+        memset(mat[x], true, max_x/10);
     }
 
     // fundo do samico
@@ -85,7 +85,7 @@ void Samico::drawBall(){
         ball->setOutlineThickness(12.f);
         window->draw(*ball);
 
-        ball_position = make_pair((int) bally, (int) ballx);
+        ball_position = make_pair((int) bally/10.0, (int) ballx/10.0);
     }
 }
 
@@ -108,7 +108,7 @@ void Samico::drawRobots(){
         if(frame_received->_blueRobots[x].getPosition().isValid()){
             window->draw(blueRobots_shape[x]);
             window->draw(blueText[x]);
-            blueRobots_position.push_back(make_pair((int) newy, (int) newx));
+            blueRobots_position.push_back(make_pair((int) newy/10.0, (int) newx/10.0));
         }
     }
 
@@ -127,7 +127,7 @@ void Samico::drawRobots(){
         if(frame_received->_yellowRobots[x].getPosition().isValid()){
             window->draw(yellowRobots_shape[x]);
             window->draw(yellowText[x]);
-            yellowRobots_position.push_back(make_pair((int) newy, (int) newx));
+            yellowRobots_position.push_back(make_pair((int) newy/10.0, (int) newx/10.0));
         }
     }
 }
@@ -204,6 +204,19 @@ void Samico::drawWindow(){
             cout << blueRobots_position[x].first << " " << blueRobots_position[x].second << endl;
             cout << "To " << ball_position.first << " " << ball_position.second << endl;
             pathing.aStar(mat, blueRobots_position[x], ball_position);
+            vector<pair<int, int>> vec = pathing.getPath();
+            int sz = vec.size();
+            cout << "size: " << sz << endl;
+            for(int y = 0; y < sz - 1; y++){
+                sf::Vertex line[] =
+                {
+                    sf::Vertex(sf::Vector2f((float) vec[y].first * 10.0, (float) vec[y].second * 10.0)),
+                    sf::Vertex(sf::Vector2f((float) vec[y+1].first * 10.0, (float) vec[y+1].second * 10.0)),
+                };
+                line[0].color = sf::Color::Red;
+                line[1].color = sf::Color::Red;
+                window->draw(line, 2, sf::Lines);
+            }
         }
 
         window->display();

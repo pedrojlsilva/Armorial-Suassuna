@@ -49,6 +49,7 @@ double pathPlanner::calculateHValue(int row, int col, pair<int, int> &dest){
 void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest){
     int row = dest.first;
     int col = dest.second;
+    path_vector.clear();
 
     stack<pair<int, int>> path;
 
@@ -80,6 +81,19 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
 
     int i, j;
     
+    for(int x = 0; x < weight; x++){
+        memset(closedList[x], false, height);
+    }
+    for(int x = 0; x < weight; x++){
+        for(int y = 0; y < height; y++){
+            cellDetails[x][y].f = INF;
+            cellDetails[x][y].g = INF;
+            cellDetails[x][y].h = INF;
+            cellDetails[x][y].parent_i = -1;
+            cellDetails[x][y].parent_j = -1;
+        }
+    }
+
     i = src.first, j = src.second;
     cellDetails[src.first][src.second].f = 0.0;
     cellDetails[src.first][src.second].g = 0.0;
@@ -106,6 +120,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i-1][j].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j] == false && isUnblocked(grid, i-1, j) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -130,6 +145,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i+1][j].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j] == false && isUnblocked(grid, i+1, j) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -154,6 +170,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i][j+1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i][j+1] == false && isUnblocked(grid, i, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -178,6 +195,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i][j-1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i][j-1] == false && isUnblocked(grid, i, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -202,6 +220,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i-1][j+1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j+1] == false && isUnblocked(grid, i-1, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -226,6 +245,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i-1][j-1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j-1] == false && isUnblocked(grid, i-1, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -250,6 +270,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i+1][j+1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j+1] == false && isUnblocked(grid, i+1, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -274,6 +295,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
                 cellDetails[i+1][j-1].parent_j = j;
                 tracePath(cellDetails, dest);
                 havePath = true;
+                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j-1] == false && isUnblocked(grid, i+1, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
