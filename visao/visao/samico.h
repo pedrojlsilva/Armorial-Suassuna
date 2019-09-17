@@ -9,6 +9,7 @@
 #include "Ball/ball.h"
 #include "Robot/robot.h"
 #include "types/frame.h"
+#include <PathPlanning/path.h>
 
 using namespace std;
 
@@ -42,6 +43,9 @@ private:
 
 private:
     Frame *frame_received=new Frame(8,100);
+
+    pathPlanner pathing = pathPlanner(max_y, max_x);
+
     sf::CircleShape *ball = new sf::CircleShape(ballRadius);
     sf::RectangleShape *fundoSamico;
     sf::Font font;
@@ -58,6 +62,11 @@ private:
     sf::Sprite yellowSprite[maxRobots];
     sf::ContextSettings settings;
 
+    bool **mat;
+    vector<pair<int, int>> blueRobots_position;
+    vector<pair<int, int>> yellowRobots_position;
+    pair<int, int> ball_position;
+
     const double zoomAmount = 1.1;
 
     sf::Vertex linhasExternas[10] =
@@ -73,8 +82,6 @@ private:
         sf::Vertex(sf::Vector2f(deslocamentoBorda, max_y/2.0)),
         sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, max_y/2.0))
     };
-
-
 
     sf::Vertex golEsquerdo[6] =
     {

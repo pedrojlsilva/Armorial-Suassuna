@@ -295,3 +295,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
     
     return ;
 }
+
+vector<pair<int, int>> pathPlanner::getPath(){
+    return path_vector;
+}

@@ -15,6 +15,8 @@ class pathPlanner{
         bool isDestination(int row, int col, pair<int, int> &dest);
         double calculateHValue(int row, int col, pair<int, int> &dest);
         void tracePath(cell **cellDetails, pair<int, int> &dest);
+        vector<pair<int, int>> getPath();
+
     private:
         int height;
         int weight;

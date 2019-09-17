@@ -1,9 +1,15 @@
 #include "samico.h"
-#include<PathPlanning/path.h>
 #include <thread>
 
 Samico::Samico()
 {
+
+    mat = (bool **) malloc(max_x * sizeof(bool *));
+    for(int x = 0; x < max_x; x++){
+        mat[x] = (bool *) malloc(max_y * sizeof(bool));
+        memset(mat[x], 1, max_y);
+    }
+
     // fundo do samico
     fundoSamico = new sf::RectangleShape(sf::Vector2f(7400.f, 10400.f));
     fundoSamico->setFillColor(sf::Color(0, 100, 0, 255));
@@ -56,7 +62,7 @@ Samico::Samico()
     }
 
     // bola
-    ;
+
     ball->setFillColor(sf::Color(255, 69, 0, 255));
     ball->setPointCount(circlePrecision);
 
@@ -78,10 +84,14 @@ void Samico::drawBall(){
         ball->setOutlineColor(sf::Color::Black);
         ball->setOutlineThickness(12.f);
         window->draw(*ball);
+
+        ball_position = make_pair((int) bally, (int) ballx);
     }
 }
 
 void Samico::drawRobots(){
+    blueRobots_position.clear();
+    yellowRobots_position.clear();
 
     for(int x = 0; x < frame_received->_blueRobots.size(); x++){
         double t = frame_received->_blueRobots[x].getOrientation().value(), newx, newy;
@@ -98,6 +108,7 @@ void Samico::drawRobots(){
         if(frame_received->_blueRobots[x].getPosition().isValid()){
             window->draw(blueRobots_shape[x]);
             window->draw(blueText[x]);
+            blueRobots_position.push_back(make_pair((int) newy, (int) newx));
         }
     }
 
@@ -116,6 +127,7 @@ void Samico::drawRobots(){
         if(frame_received->_yellowRobots[x].getPosition().isValid()){
             window->draw(yellowRobots_shape[x]);
             window->draw(yellowText[x]);
+            yellowRobots_position.push_back(make_pair((int) newy, (int) newx));
         }
     }
 }
@@ -186,6 +198,32 @@ void Samico::drawWindow(){
 
         drawBall();
         drawRobots();
+
+        for(int x = 0; x < blueRobots_position.size(); x++){
+            for(int y = 0; y < blueRobots_position.size(); y++){
+                if(x != y){
+                    mat[blueRobots_position[y].first][blueRobots_position[y].second] = false;
+                }
+            }
+            cout << "To calculando do robo " << x << " ate a bola " << endl;
+            pathing.aStar(mat, blueRobots_position[x], ball_position);
+            vector<pair<int, int>> vec = pathing.getPath();
+            int sz = vec.size();
+            for(int x = 0; x < sz - 1; x++){
+                sf::Vertex line[] =
+                {
+                    sf::Vertex(sf::Vector2f((float) vec[x].first, (float) vec[x].second)),
+                    sf::Vertex(sf::Vector2f((float) vec[x+1].first, (float) vec[x+1].second)),
+                };
+                line[0].color = sf::Color::Red;
+                line[1].color = sf::Color::Red;
+                window->draw(line, 2, sf::Lines);
+            }
+            for(int y = 0; y < blueRobots_position.size(); y++){
+                mat[blueRobots_position[y].first][blueRobots_position[y].second] = true;
+            }
+        }
+
         window->display();
     }
 
