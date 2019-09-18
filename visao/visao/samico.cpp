@@ -6,8 +6,8 @@ Samico::Samico()
 
     mat = (bool **) malloc(max_y/10 * sizeof(bool *));
     for(int x = 0; x < max_y/10; x++){
-        mat[x] = (bool *) malloc(max_x/10 * sizeof(bool));
-        memset(mat[x], true, max_x/10);
+        mat[x] = (bool *) malloc(max_x/5 * sizeof(bool));
+        memset(mat[x], true, max_x/5);
     }
 
     // fundo do samico
@@ -238,9 +238,8 @@ void Samico::drawWindow(){
         drawRobots();
 
         for(int x = 0; x < blueRobots_position.size(); x++){
-            if(x == 0){ // testando so p o robo zero
+            if(x == 0){
             setColisions(x, true);
-
             pathing.aStar(mat, blueRobots_position[x], ball_position);
             vector<pair<int, int>> vec = pathing.getPath();
             int sz = vec.size();
@@ -256,12 +255,12 @@ void Samico::drawWindow(){
             }
 
             unsetColisions(x, true);
-        }
+            }
         }
 
         for(int x = 0; x < yellowRobots_position.size(); x++){
+            if(x == 0){
             setColisions(x, false);
-
             pathing.aStar(mat, yellowRobots_position[x], ball_position);
             vector<pair<int, int>> vec = pathing.getPath();
             int sz = vec.size();
@@ -277,6 +276,7 @@ void Samico::drawWindow(){
             }
 
             unsetColisions(x, false);
+            }
         }
 
         window->display();

@@ -48,7 +48,7 @@ private:
 private:
     Frame *frame_received=new Frame(8,100);
 
-    pathPlanner pathing = pathPlanner(max_y/10.0, max_x/10.0);
+    pathPlanner pathing = pathPlanner(max_y/10.0, max_x/5.0);
 
     sf::CircleShape *ball = new sf::CircleShape(ballRadius);
     sf::RectangleShape *fundoSamico;

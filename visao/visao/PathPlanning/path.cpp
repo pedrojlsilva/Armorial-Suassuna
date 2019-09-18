@@ -84,6 +84,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
     for(int x = 0; x < weight; x++){
         memset(closedList[x], false, height);
     }
+
     for(int x = 0; x < weight; x++){
         for(int y = 0; y < height; y++){
             cellDetails[x][y].f = INF;

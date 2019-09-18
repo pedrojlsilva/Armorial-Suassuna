@@ -45,9 +45,6 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
     if(qt_blueRobots != 0) robotsInfo->_qt_blue=qt_blueRobots;
     if(qt_yellowRobots != 0) robotsInfo->_qt_yellow=qt_yellowRobots;
     robotsInfo->_camera_id=camera_id;
-    cout<<"amarelos:   "<< robotsInfo->_qt_yellow<<std::endl;
-    cout<<"azuis:      "<< robotsInfo->_qt_blue<<std::endl;
-    cout << "la no samico ta: " << robotsInfo->_qt_blue << " " << robotsInfo->_qt_yellow << endl;
 
     // loop para checar se o robo esta perdido ou ruidoso (invalidando a posicao)
     for(int x = 0; x < qt_robosTime; x++){
