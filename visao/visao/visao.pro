@@ -1,4 +1,6 @@
 QT -= gui
+QT += network
+QT += widgets
 
 CONFIG += c++14 console
 CONFIG -= app_bundle
@@ -23,6 +25,7 @@ SOURCES += \
     LossFilter/loss.cpp \
     NoiseFilter/noise.cpp \
 	PathPlanning/path.cpp \
+    grsSimulator/grsSimulator.cpp \
     Robot/robot.cpp \
     types/angle.cpp \
     types/object.cpp \
@@ -35,6 +38,9 @@ SOURCES += \
     include/3rd_party/messages_robocup_ssl_geometry.pb.cc \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.cc \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.cc \
+    include/3rd_party/grSim_Commands.pb.cc \
+    include/3rd_party/grSim_Packet.pb.cc \
+    include/3rd_party/grSim_Replacement.pb.cc \
     types/frame.cpp \
     samico.cpp
 
@@ -54,6 +60,9 @@ DISTFILES += \
     include/3rd_party/protobuf/messages_robocup_ssl_refbox_log.proto \
     include/3rd_party/protobuf/messages_robocup_ssl_wrapper.proto \
     include/3rd_party/protobuf/messages_robocup_ssl_geometry.proto \
+    include/3rd_party/protobuf/grSim_Commands.proto \
+    include/3rd_party/protobuf/grSim_Packet.proto \
+    include/3rd_party/protobuf/grSim_Replacement.proto \
     include/3rd_party/protobuf/protobuf.sh \
     utils/arial.ttf \
     utils/bluerobot.png \
@@ -69,6 +78,7 @@ HEADERS += \
     KalmanFilter/kalmanstate.h \
     KalmanFilter/matrix.h \
 	PathPlanning/path.h \
+    grsSimulator/grsSimulator.h \
     LossFilter/loss.h \
     NoiseFilter/noise.h \
     Robot/robot.h \
@@ -85,6 +95,9 @@ HEADERS += \
     include/3rd_party/messages_robocup_ssl_geometry.pb.h \
     include/3rd_party/messages_robocup_ssl_wrapper.pb.h \
     include/3rd_party/messages_robocup_ssl_refbox_log.pb.h \
+    include/3rd_party/grSim_Commands.pb.h \
+    include/3rd_party/grSim_Packet.pb.h \
+    include/3rd_party/grSim_Replacement.pb.h \
     types/frame.h \
     samico.h
 

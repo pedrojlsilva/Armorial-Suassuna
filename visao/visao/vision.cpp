@@ -8,6 +8,7 @@
 #include "Ball/ball.h"
 #include "Robot/robot.h"
 #include "types/frame.h"
+#include "grsSimulator/grsSimulator.h"
 #include "samico.h"
 
 
@@ -26,6 +27,9 @@ Frame *robotsInfo = new Frame(qt_robosTime, tempoFiltros);
 Position newPosition = Position();
 Angle newOrientation = Angle();
 
+/* simulador do grsim */
+grsSimulator *grSim = new grsSimulator();
+grs_robot grSim_robot;
 
 /* variables */
 
@@ -109,6 +113,19 @@ int main(){
     client.open(true);
     SSL_WrapperPacket packet;
 
+
+    /* teste do simulador do grsim */
+    grSim_robot.id = 0; // 0 a 7
+    grSim_robot.v1 = 1; // rad/s
+    grSim_robot.v2 = 1; // rad/s
+    grSim_robot.v3 = 1; // rad/s
+    grSim_robot.v4 = 1; // rad/s
+    grSim_robot.isYellow = true; // true ou false
+    //grSim_robot.vx = 1; // m/s
+    //grSim_robot.vy = 1; // m/s
+    grSim_robot.angle = 0; // rads/s
+    /* teste do simulador do grsim */
+
     // samico draw thread
     samico->getWindow()->setActive(false); // deactivating samico in main thread
     thread first (samico_drawThread);
@@ -125,7 +142,7 @@ int main(){
                 setRobotsInfo(detection);
                 setBallInfo(detection);
                 samico->setFrame(robotsInfo);
-                //samico->drawWindow();
+                grSim->sendPacket(grSim_robot);
             }
         }
     }
