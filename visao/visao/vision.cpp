@@ -98,9 +98,57 @@ void gerarBaterias(){
     }
 }
 
-
 void samico_drawThread(){
     samico->drawWindow();
+}
+
+double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot){
+    double vectorRobot2BallX = (point_x - robot_x);
+    double vectorRobot2BallY = (point_y - robot_y);
+    double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
+
+    vectorRobot2BallX = vectorRobot2BallX / modVectorRobot2Ball;
+    vectorRobot2BallY = vectorRobot2BallY / modVectorRobot2Ball;
+
+    double vectorOriginX = 1;
+    double vectorOriginY = 0;
+
+    double angleOrigin2ball;
+    double angleRobot2Ball;
+
+    angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
+
+    if(vectorRobot2BallY < 0){ //terceiro e quadrante
+        angleOrigin2ball = 2*M_PI - acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
+    }else{ //primeiro e segundo quadrante
+        angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
+    }
+
+    double minValue = 1.5;
+    double maxValue = 2.0;
+
+    double speed;
+
+    angleRobot2Ball = angleOrigin2Robot - angleOrigin2ball;
+
+    if(index == 6){
+        cout << angleOrigin2Robot << " <- origem ate robo" << endl;
+        cout << angleRobot2Ball << " <- origem ate bola" << endl;
+    }
+
+    if(fabs(angleRobot2Ball) >= M_PI / 60.0){
+        if(abs(angleRobot2Ball) < minValue){
+            if(angleRobot2Ball < 0.0) speed = minValue;
+            else speed = -minValue;
+        }else{
+            if(angleRobot2Ball < 0.0) speed = -maxValue;
+            else speed = maxValue;
+        }
+    }else{
+        speed = 0;
+    }
+
+    return speed;
 }
 
 int main(){
@@ -126,58 +174,14 @@ int main(){
                 setBallInfo(detection);
 
                 if(detection.robots_blue_size() != 0){
-                for(int x = 0; x < 8; x++){
-                double pos_rbx = robotsInfo->_blueRobots[x].getPosition().getX();
-                double pos_rby = robotsInfo->_blueRobots[x].getPosition().getY();
+                    for(int x = 0; x < 8; x++){
+                        grSim_robot.id = x;
+                        grSim_robot.isYellow = false;
+                        grSim_robot.angle = getSpeedRotateToPoint(x, robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                                                                  robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
 
-                double pos_bx = robotsInfo->_ball.getBallPosition().getX();
-                double pos_by = robotsInfo->_ball.getBallPosition().getY();
-
-                double vectorRobot2BallX = (pos_bx - pos_rbx);
-                double vectorRobot2BallY = (pos_by - pos_rby);
-                double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
-
-                vectorRobot2BallX = vectorRobot2BallX / modVectorRobot2Ball;
-                vectorRobot2BallY = vectorRobot2BallY / modVectorRobot2Ball;
-
-                double vectorOriginX = 1;
-                double vectorOriginY = 0;
-
-                double angleOrigin2ball;
-                double angleRobot2Ball;
-
-                if(vectorRobot2BallY < 0){ //terceiro e quadrante
-                    angleOrigin2ball = 2*M_PI - acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
-                }else{ //primeiro e segundo quadrante
-                    angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
-                }
-
-                angleRobot2Ball = robotsInfo->_blueRobots[x].getOrientation().value() - angleOrigin2ball;
-
-                double minValue = 1.5;
-                double maxValue = 3.0;
-
-                if(abs(angleRobot2Ball) >= M_PI / 60.0){
-                    grSim_robot.id = x;
-                    grSim_robot.isYellow = false;
-                    if(abs(angleRobot2Ball) / 2.0 < minValue){
-                        if(angleRobot2Ball < 0.0) grSim_robot.angle = minValue;
-                        else grSim_robot.angle = -minValue;
-                    }else{
-                        if(abs(angleRobot2Ball) < minValue) angleRobot2Ball = minValue;
-                        if(abs(angleRobot2Ball) > maxValue) angleRobot2Ball = maxValue;
-
-                        if(angleRobot2Ball < 0.0) grSim_robot.angle = -angleRobot2Ball;
-                        else grSim_robot.angle = angleRobot2Ball;
+                        grSim->sendPacket(grSim_robot);
                     }
-                }else{
-                    grSim_robot.id = x;
-                    grSim_robot.isYellow = false;
-                    grSim_robot.angle = 0;
-                }
-
-                grSim->sendPacket(grSim_robot);
-                }
                 }
                 samico->setFrame(robotsInfo);
                 //grSim->sendPacket(grSim_robot);
