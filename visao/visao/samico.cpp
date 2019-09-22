@@ -16,7 +16,7 @@ Samico::Samico()
 
     // fonte dos numeros nos jogadores
 
-    if(!font.loadFromFile("utils/arial.ttf")){
+    if(!font.loadFromFile("../utils/arial.ttf")){
         printf("Error loading font.\n");
         exit(-1);
     }
