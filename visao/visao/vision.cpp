@@ -103,18 +103,18 @@ void samico_drawThread(){
 }
 
 double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot){
-    double vectorRobot2BallX = (point_x - robot_x);
-    double vectorRobot2BallY = (point_y - robot_y);
-    double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
+    long double vectorRobot2BallX = (point_x - robot_x);
+    long double vectorRobot2BallY = (point_y - robot_y);
+    long double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
 
     vectorRobot2BallX = vectorRobot2BallX / modVectorRobot2Ball;
     vectorRobot2BallY = vectorRobot2BallY / modVectorRobot2Ball;
 
-    double vectorOriginX = 1;
+    long double vectorOriginX = 1;
     double vectorOriginY = 0;
 
-    double angleOrigin2ball;
-    double angleRobot2Ball;
+    long double angleOrigin2ball;
+    long double angleRobot2Ball;
 
     angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
 
@@ -124,10 +124,10 @@ double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double p
         angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
     }
 
-    double minValue = 1.5;
-    double maxValue = 2.0;
+    long double minValue = 1.5;
+    long double maxValue = 2.0;
 
-    double speed;
+    long double speed;
 
     angleRobot2Ball = angleOrigin2Robot - angleOrigin2ball;
 
@@ -141,8 +141,8 @@ double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double p
             if(angleRobot2Ball < 0.0) speed = minValue;
             else speed = -minValue;
         }else{
-            if(angleRobot2Ball < 0.0) speed = -maxValue;
-            else speed = maxValue;
+            if(angleRobot2Ball < 0.0) speed = maxValue;
+            else speed = -maxValue;
         }
     }else{
         speed = 0;
