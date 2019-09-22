@@ -131,18 +131,18 @@ double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double p
 
     angleRobot2Ball = angleOrigin2Robot - angleOrigin2ball;
 
-    if(index == 6){
-        cout << angleOrigin2Robot << " <- origem ate robo" << endl;
-        cout << angleRobot2Ball << " <- origem ate bola" << endl;
-    }
-
     if(fabs(angleRobot2Ball) >= M_PI / 60.0){
         if(abs(angleRobot2Ball) < minValue){
             if(angleRobot2Ball < 0.0) speed = minValue;
             else speed = -minValue;
         }else{
-            if(angleRobot2Ball < 0.0) speed = maxValue;
-            else speed = -maxValue;
+            if(angleRobot2Ball < 0.0){
+                if(angleRobot2Ball < -M_PI) speed = -maxValue;
+                else speed = maxValue;
+            }else{
+                if(angleRobot2Ball < M_PI) speed = -maxValue;
+                else speed = maxValue;
+            }
         }
     }else{
         speed = 0;
