@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <math.h>
 #include <iostream>
 #include <netinet/in.h>
 #include <vector>
@@ -10,7 +11,6 @@
 #include "types/frame.h"
 #include "grsSimulator/grsSimulator.h"
 #include "samico.h"
-
 
 #include "include/3rd_party/robocup_ssl_client.h"
 #include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
@@ -32,15 +32,11 @@ grsSimulator *grSim = new grsSimulator();
 grs_robot grSim_robot;
 
 /* variables */
-
 vector<Robot> blueRobots;
 vector<Robot> yellowRobots;
 Ball *ball;
 Robot *aux;
 Samico *samico = new Samico();
-
-
-
 
 void setRobotsInfo(SSL_DetectionFrame &detection){
     int qt_blueRobots = detection.robots_blue_size();
@@ -113,19 +109,6 @@ int main(){
     client.open(true);
     SSL_WrapperPacket packet;
 
-
-    /* teste do simulador do grsim */
-    grSim_robot.id = 0; // 0 a 7
-    grSim_robot.v1 = 1; // rad/s
-    grSim_robot.v2 = 1; // rad/s
-    grSim_robot.v3 = 1; // rad/s
-    grSim_robot.v4 = 1; // rad/s
-    grSim_robot.isYellow = true; // true ou false
-    //grSim_robot.vx = 1; // m/s
-    //grSim_robot.vy = 1; // m/s
-    grSim_robot.angle = 0; // rads/s
-    /* teste do simulador do grsim */
-
     // samico draw thread
     samico->getWindow()->setActive(false); // deactivating samico in main thread
     thread first (samico_drawThread);
@@ -141,8 +124,63 @@ int main(){
                SSL_DetectionFrame detection = packet.detection();
                 setRobotsInfo(detection);
                 setBallInfo(detection);
-                samico->setFrame(robotsInfo);
+
+                if(detection.robots_blue_size() != 0){
+                for(int x = 0; x < 8; x++){
+                double pos_rbx = robotsInfo->_blueRobots[x].getPosition().getX();
+                double pos_rby = robotsInfo->_blueRobots[x].getPosition().getY();
+
+                double pos_bx = robotsInfo->_ball.getBallPosition().getX();
+                double pos_by = robotsInfo->_ball.getBallPosition().getY();
+
+                double vectorRobot2BallX = (pos_bx - pos_rbx);
+                double vectorRobot2BallY = (pos_by - pos_rby);
+                double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
+
+                vectorRobot2BallX = vectorRobot2BallX / modVectorRobot2Ball;
+                vectorRobot2BallY = vectorRobot2BallY / modVectorRobot2Ball;
+
+                double vectorOriginX = 1;
+                double vectorOriginY = 0;
+
+                double angleOrigin2ball;
+                double angleRobot2Ball;
+
+                if(vectorRobot2BallY < 0){ //terceiro e quadrante
+                    angleOrigin2ball = 2*M_PI - acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
+                }else{ //primeiro e segundo quadrante
+                    angleOrigin2ball = acos((vectorRobot2BallX * vectorOriginX)); //angulo que a bola faz com o eixo x em relação ao robo
+                }
+
+                angleRobot2Ball = robotsInfo->_blueRobots[x].getOrientation().value() - angleOrigin2ball;
+
+                double minValue = 1.5;
+                double maxValue = 3.0;
+
+                if(abs(angleRobot2Ball) >= M_PI / 60.0){
+                    grSim_robot.id = x;
+                    grSim_robot.isYellow = false;
+                    if(abs(angleRobot2Ball) / 2.0 < minValue){
+                        if(angleRobot2Ball < 0.0) grSim_robot.angle = minValue;
+                        else grSim_robot.angle = -minValue;
+                    }else{
+                        if(abs(angleRobot2Ball) < minValue) angleRobot2Ball = minValue;
+                        if(abs(angleRobot2Ball) > maxValue) angleRobot2Ball = maxValue;
+
+                        if(angleRobot2Ball < 0.0) grSim_robot.angle = -angleRobot2Ball;
+                        else grSim_robot.angle = angleRobot2Ball;
+                    }
+                }else{
+                    grSim_robot.id = x;
+                    grSim_robot.isYellow = false;
+                    grSim_robot.angle = 0;
+                }
+
                 grSim->sendPacket(grSim_robot);
+                }
+                }
+                samico->setFrame(robotsInfo);
+                //grSim->sendPacket(grSim_robot);
             }
         }
     }
