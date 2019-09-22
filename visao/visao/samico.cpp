@@ -193,6 +193,7 @@ void Samico::drawWindow(){
         while(window->pollEvent(event)){
             if(event.type == sf::Event::Closed){
                 window->close();
+                exit(-1);
             }
             if (event.type == sf::Event::MouseWheelScrolled){
                 if (event.mouseWheelScroll.delta > 0)
