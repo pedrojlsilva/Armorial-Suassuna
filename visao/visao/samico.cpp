@@ -285,8 +285,7 @@ void Samico::drawWindow(){
 }
 
 void Samico::setFrame(Frame *newFrame){
-       cout<<frame_received->_qt_robosTime<<std::endl;
-       frame_received = newFrame;
+    frame_received = newFrame;
 }
 
 pathPlanner Samico::getPath(){

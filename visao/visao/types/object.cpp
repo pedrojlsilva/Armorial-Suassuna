@@ -88,7 +88,6 @@ bool Object::checkLoss(){
 void Object::update(double confidence, Position pos, Angle ori) {
    // _mutex.lockForWrite();
     if(!_noiseFilter.isInitialized()){
-        printf("Nao ta inicializado!");
         _noiseFilter.initCounter();
         _position.setInvalid(); // como o filtro de ruido ainda nao terminou
                                 // é necessário invalidar a posição até que ele acabe

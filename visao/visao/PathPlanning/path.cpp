@@ -366,8 +366,6 @@ vector<pair<int, int>> pathPlanner::getPath(bool isYellow, int index){
         aStar_blue[index] = optimize;
     }
 
-    printf("Tamanho antes: %d - depois: %d\n", size, (int)optimize.size());
-
     if(isYellow) return optimize;
     else return aStar_blue[index];
 }
