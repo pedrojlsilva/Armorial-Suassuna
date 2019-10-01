@@ -102,7 +102,7 @@ void samico_drawThread(){
     samico->drawWindow();
 }
 
-double getSpeedRotateToPoint(int index, double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot){
+double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot){
     long double vectorRobot2BallX = (point_x - robot_x);
     long double vectorRobot2BallY = (point_y - robot_y);
     long double modVectorRobot2Ball = sqrt(pow(vectorRobot2BallX, 2) + pow(vectorRobot2BallY, 2));
@@ -166,7 +166,7 @@ int main(){
         gerarBaterias();
     }
 
-    while(true){
+    while(true){ 
         if(client.receive(packet)){
             if(packet.has_detection()){
                SSL_DetectionFrame detection = packet.detection();
@@ -175,9 +175,10 @@ int main(){
 
                 if(detection.robots_blue_size() != 0){
                     for(int x = 0; x < 8; x++){
+
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
-                        grSim_robot.angle = getSpeedRotateToPoint(x, robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
 
                         grSim->sendPacket(grSim_robot);

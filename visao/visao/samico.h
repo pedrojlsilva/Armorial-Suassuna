@@ -19,7 +19,7 @@ using namespace std;
 #define centralCirleRadius 500.f
 #define deslocamentoBorda 300.f
 
-#define deslocamentoLinhas 5
+#define deslocamentoLinhas 1
 
 #define max_x 7400
 #define max_y 10400
@@ -34,6 +34,7 @@ public:
     Samico();
     void drawWindow();
     void setFrame(Frame *newFrame);
+    pathPlanner getPath();
     sf::RenderWindow *getWindow();
 
 

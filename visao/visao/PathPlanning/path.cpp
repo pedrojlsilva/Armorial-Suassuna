@@ -27,6 +27,12 @@ pathPlanner::pathPlanner(int tam_row, int tam_col){
         }
     }
 
+    for(int x = 0; x < 8; x++){
+        vector<pair<int, int>> p;
+        aStar_blue.push_back(p);
+        aStar_yellow.push_back(p);
+    }
+
     havePath = false;
 }
 
@@ -46,7 +52,7 @@ double pathPlanner::calculateHValue(int row, int col, pair<int, int> &dest){
     return ((double) sqrt(pow((row - dest.first), 2) + pow((col - dest.second), 2)));
 }
 
-void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest){
+void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest, bool isYellow, int index){
     int row = dest.first;
     int col = dest.second;
 
@@ -65,14 +71,18 @@ void pathPlanner::tracePath(cell **cellDetails, pair<int, int> &dest){
     while(!path.empty()){
         pair<int, int> p = path.top();
         path.pop();
-        path_vector.push_back(make_pair(p.first, p.second));
+        if(isYellow) aStar_yellow[index].push_back(make_pair(p.first, p.second));
+        else aStar_blue[index].push_back(make_pair(p.first, p.second));
     }
 
     return ;
 }
 
-void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
-    path_vector.clear();
+void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest, bool isYellow, int index){
+    if(index < 0 || index >= 8) return ;
+    if(isYellow) aStar_yellow[index].clear();
+    else aStar_blue[index].clear();
+
     if(!isValid(src.first, src.second)) return ;
     if(!isValid(dest.first, dest.second)) return ;
     if(!isUnblocked(grid, src.first, src.second)) return ;
@@ -119,9 +129,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i-1, j, dest)){
                 cellDetails[i-1][j].parent_i = i;
                 cellDetails[i-1][j].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j] == false && isUnblocked(grid, i-1, j) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -144,9 +153,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i+1, j, dest)){
                 cellDetails[i+1][j].parent_i = i;
                 cellDetails[i+1][j].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j] == false && isUnblocked(grid, i+1, j) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -169,9 +177,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i, j+1, dest)){
                 cellDetails[i][j+1].parent_i = i;
                 cellDetails[i][j+1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i][j+1] == false && isUnblocked(grid, i, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -194,9 +201,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i, j-1, dest)){
                 cellDetails[i][j-1].parent_i = i;
                 cellDetails[i][j-1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i][j-1] == false && isUnblocked(grid, i, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -219,9 +225,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i-1, j+1, dest)){
                 cellDetails[i-1][j+1].parent_i = i;
                 cellDetails[i-1][j+1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j+1] == false && isUnblocked(grid, i-1, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -244,9 +249,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i-1, j-1, dest)){
                 cellDetails[i-1][j-1].parent_i = i;
                 cellDetails[i-1][j-1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i-1][j-1] == false && isUnblocked(grid, i-1, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -269,9 +273,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i+1, j+1, dest)){
                 cellDetails[i+1][j+1].parent_i = i;
                 cellDetails[i+1][j+1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j+1] == false && isUnblocked(grid, i+1, j+1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -294,9 +297,8 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
             if(isDestination(i+1, j-1, dest)){
                 cellDetails[i+1][j-1].parent_i = i;
                 cellDetails[i+1][j-1].parent_j = j;
-                tracePath(cellDetails, dest);
+                tracePath(cellDetails, dest, isYellow, index);
                 havePath = true;
-                cout << "found path!" << endl;
                 return ;
             }else if(closedList[i+1][j-1] == false && isUnblocked(grid, i+1, j-1) == true){
                 gNew = cellDetails[i][j].g + 1.0;
@@ -319,6 +321,53 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest){
     return ;
 }
 
-vector<pair<int, int>> pathPlanner::getPath(){
-    return path_vector;
+vector<pair<int, int>> pathPlanner::getPath(bool isYellow, int index){
+    vector<pair<int, int>> optimize;
+    int size;
+
+    if(isYellow && aStar_yellow[index].size() != 0){
+        size = aStar_yellow[index].size();
+        optimize.push_back(aStar_yellow[index][0]);
+        // at = coef angular da reta
+        double delta_y = aStar_yellow[index][1].second - optimize[optimize.size() - 1].second;
+        double delta_x = aStar_yellow[index][1].first - optimize[optimize.size() - 1].first;
+        double at = delta_y/delta_x;
+        for(int x = 1; x <= size; x++){
+            if(x == size) optimize.push_back(aStar_yellow[index][x-1]);
+            else{
+                delta_y = aStar_yellow[index][x].second - optimize[optimize.size() - 1].second;
+                delta_x = aStar_yellow[index][x].first - optimize[optimize.size() - 1].first;
+                if(delta_y/delta_x != at){
+                    at = delta_y/delta_x;
+                    optimize.push_back(aStar_yellow[index][x]);
+                }
+            }
+        }
+        aStar_yellow[index] = optimize;
+    }
+    else if(!isYellow && aStar_blue[index].size() != 0){
+        size = aStar_blue[index].size();
+        optimize.push_back(aStar_blue[index][0]);
+        // at = coef angular da reta
+        double delta_y = aStar_blue[index][1].second - optimize[optimize.size() - 1].second;
+        double delta_x = aStar_blue[index][1].first - optimize[optimize.size() - 1].first;
+        double at = delta_y/delta_x;
+        for(int x = 1; x <= size; x++){
+            if(x == size) optimize.push_back(aStar_blue[index][x-1]);
+            else{
+                delta_y = aStar_blue[index][x].second - optimize[optimize.size() - 1].second;
+                delta_x = aStar_blue[index][x].first - optimize[optimize.size() - 1].first;
+                if(delta_y/delta_x != at){
+                    at = delta_y/delta_x;
+                    optimize.push_back(aStar_blue[index][x]);
+                }
+            }
+        }
+        aStar_blue[index] = optimize;
+    }
+
+    printf("Tamanho antes: %d - depois: %d\n", size, (int)optimize.size());
+
+    if(isYellow) return optimize;
+    else return aStar_blue[index];
 }

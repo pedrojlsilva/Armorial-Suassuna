@@ -241,8 +241,8 @@ void Samico::drawWindow(){
         for(int x = 0; x < blueRobots_position.size(); x++){
             if(x == 0){
             setColisions(x, true);
-            pathing.aStar(mat, blueRobots_position[x], ball_position);
-            vector<pair<int, int>> vec = pathing.getPath();
+            pathing.aStar(mat, blueRobots_position[x], ball_position, false, x);
+            vector<pair<int, int>> vec = pathing.getPath(false, x);
             int sz = vec.size();
             for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
                 sf::Vertex line[] =
@@ -254,7 +254,6 @@ void Samico::drawWindow(){
                 line[1].color = sf::Color::Red;
                 window->draw(line, 2, sf::Lines);
             }
-
             unsetColisions(x, true);
             }
         }
@@ -262,8 +261,8 @@ void Samico::drawWindow(){
         for(int x = 0; x < yellowRobots_position.size(); x++){
             if(x == 0){
             setColisions(x, false);
-            pathing.aStar(mat, yellowRobots_position[x], ball_position);
-            vector<pair<int, int>> vec = pathing.getPath();
+            pathing.aStar(mat, yellowRobots_position[x], ball_position, true, x);
+            vector<pair<int, int>> vec = pathing.getPath(true, x);
             int sz = vec.size();
             for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
                 sf::Vertex line[] =
@@ -288,8 +287,8 @@ void Samico::drawWindow(){
 void Samico::setFrame(Frame *newFrame){
        cout<<frame_received->_qt_robosTime<<std::endl;
        frame_received = newFrame;
-
-
 }
 
-
+pathPlanner Samico::getPath(){
+    return pathing;
+}
