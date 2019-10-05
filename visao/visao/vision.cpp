@@ -11,6 +11,7 @@
 #include "types/frame.h"
 #include "grsSimulator/grsSimulator.h"
 #include "samico.h"
+#include <algorithm>
 
 #include "include/3rd_party/robocup_ssl_client.h"
 #include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
@@ -155,11 +156,11 @@ double getSpeedX(double robot_x, double robot_y, double point_x, double point_y,
     long double Vy = (point_y - robot_y)/10.0 ;
     long double theta= robotAngle;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-    long double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
-    if(moduloDistancia > 60.0) {
-        vxSaida = vxSaida;
-    } else if(moduloDistancia> 30.0 && moduloDistancia<60.0){
-        vxSaida = vxSaida * 0.4;
+    double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
+    if(moduloDistancia > 80.0) {
+        vxSaida = std::max(vxSaida,1.0);
+    } else if(moduloDistancia > 30.0 && moduloDistancia<80.0){
+        vxSaida = std::min(vxSaida*0.7, 1.0);
     } else {
         vxSaida = 0;
     }
@@ -170,12 +171,12 @@ double getSpeedY(double robot_x, double robot_y, double point_x, double point_y,
     long double Vx = (robot_x - point_x)/10.0;
     long double Vy = (robot_y - point_y)/10.0;
     long double theta = robotAngle;
-    long double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
+    double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-    if(moduloDistancia > 60.0) {
-        vySaida = vySaida;
-    }else if(moduloDistancia> 30.0 && moduloDistancia<60.0){
-        vySaida = vySaida*0.4;
+    if(moduloDistancia > 80.0) {
+        vySaida = std::max(vySaida,1.0);
+    }else if(moduloDistancia > 30.0 && moduloDistancia<80.0){
+        vySaida = std::min(vySaida*0.7, 1.0);
     }else{
         vySaida = 0;
     }
@@ -210,7 +211,7 @@ int main(){
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
                         grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                                                                   robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
 
                         grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
@@ -218,8 +219,7 @@ int main(){
                         grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
                         
-                        printf("vxSaida distancia é: %.2f\n", grSim_robot.vx);
-                        printf("vYsaida da distancia é: %.2f\n", grSim_robot.vy);
+                        
                         grSim->sendPacket(grSim_robot);
                     // }
                 }
