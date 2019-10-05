@@ -172,7 +172,6 @@ double getSpeedY(double robot_x, double robot_y, double point_x, double point_y,
     long double theta = robotAngle;
     long double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-    printf("modulo da distancia é %.2Lf\n", moduloDistancia);
     if(moduloDistancia > 60.0) {
         vySaida = vySaida;
     }else if(moduloDistancia> 30.0 && moduloDistancia<60.0){
