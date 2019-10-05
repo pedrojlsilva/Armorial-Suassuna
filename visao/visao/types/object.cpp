@@ -87,14 +87,7 @@ bool Object::checkLoss(){
 
 void Object::update(double confidence, Position pos, Angle ori) {
    // _mutex.lockForWrite();
-/*
-    _confidence = confidence;
-    _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
-    _position.setPosition(_kalmanFilter.getPosition().getX(), _kalmanFilter.getPosition().getY()); // pega a posição retornada pelo kalman
-    _orientation.setValue(ori.value()); // dou update no angulo do robo
-*/
     if(!_noiseFilter.isInitialized()){
-        printf("Nao ta inicializado!");
         _noiseFilter.initCounter();
         _position.setInvalid(); // como o filtro de ruido ainda nao terminou
                                 // é necessário invalidar a posição até que ele acabe
@@ -102,7 +95,6 @@ void Object::update(double confidence, Position pos, Angle ori) {
         if(_noiseFilter.noiseFilter()){ // caso o filtro tenha terminado o tempo
             _position.setValid();
             _lossFilter.lossFilter(true); // dou update no filtro de perda
-            std::cout <<"received:" << pos.getX() << " " << pos.getY() << std::endl;
             _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
             _position.setPosition(_kalmanFilter.getPosition().getX(), _kalmanFilter.getPosition().getY()); // pega a posição retornada pelo kalman
             _orientation.setValue(ori.value()); // dou update no angulo do robo

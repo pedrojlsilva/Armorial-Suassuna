@@ -9,6 +9,7 @@
 #include "Ball/ball.h"
 #include "Robot/robot.h"
 #include "types/frame.h"
+#include <PathPlanning/path.h>
 
 using namespace std;
 
@@ -17,6 +18,8 @@ using namespace std;
 #define ballRadius 50.f
 #define centralCirleRadius 500.f
 #define deslocamentoBorda 300.f
+
+#define deslocamentoLinhas 1
 
 #define max_x 7400
 #define max_y 10400
@@ -31,6 +34,7 @@ public:
     Samico();
     void drawWindow();
     void setFrame(Frame *newFrame);
+    pathPlanner getPath();
     sf::RenderWindow *getWindow();
 
 
@@ -38,10 +42,15 @@ private:
     void drawBall();
     void drawRobots();
     void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoom);
+    void setColisions(int index_at, bool isBlue);
+    void unsetColisions(int index_at, bool isBlue);
 
 
 private:
     Frame *frame_received=new Frame(8,100);
+
+    pathPlanner pathing = pathPlanner(max_y/10.0, max_x/5.0);
+
     sf::CircleShape *ball = new sf::CircleShape(ballRadius);
     sf::RectangleShape *fundoSamico;
     sf::Font font;
@@ -58,6 +67,11 @@ private:
     sf::Sprite yellowSprite[maxRobots];
     sf::ContextSettings settings;
 
+    bool **mat;
+    vector<pair<int, int>> blueRobots_position;
+    vector<pair<int, int>> yellowRobots_position;
+    pair<int, int> ball_position;
+
     const double zoomAmount = 1.1;
 
     sf::Vertex linhasExternas[10] =
@@ -73,8 +87,6 @@ private:
         sf::Vertex(sf::Vector2f(deslocamentoBorda, max_y/2.0)),
         sf::Vertex(sf::Vector2f(max_x - deslocamentoBorda, max_y/2.0))
     };
-
-
 
     sf::Vertex golEsquerdo[6] =
     {

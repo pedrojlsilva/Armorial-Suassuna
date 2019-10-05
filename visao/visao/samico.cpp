@@ -3,13 +3,20 @@
 
 Samico::Samico()
 {
+
+    mat = (bool **) malloc(max_y/10 * sizeof(bool *));
+    for(int x = 0; x < max_y/10; x++){
+        mat[x] = (bool *) malloc(max_x/5 * sizeof(bool));
+        memset(mat[x], true, max_x/5);
+    }
+
     // fundo do samico
     fundoSamico = new sf::RectangleShape(sf::Vector2f(7400.f, 10400.f));
     fundoSamico->setFillColor(sf::Color(0, 100, 0, 255));
 
     // fonte dos numeros nos jogadores
 
-    if(!font.loadFromFile("utils/arial.ttf")){
+    if(!font.loadFromFile("../utils/arial.ttf")){
         printf("Error loading font.\n");
         exit(-1);
     }
@@ -55,7 +62,7 @@ Samico::Samico()
     }
 
     // bola
-    ;
+
     ball->setFillColor(sf::Color(255, 69, 0, 255));
     ball->setPointCount(circlePrecision);
 
@@ -71,16 +78,20 @@ Samico::Samico()
 
 void Samico::drawBall(){
     if(frame_received->_ball.getBallPosition().isValid()){
-        double ballx = abs(((frame_received->_ball.getPosition().getX())+6000.0)/(6000.0/5200.0));
-        double bally = abs(((frame_received->_ball.getPosition().getY())-4700)/(4700.0/3700.0));
+        double ballx = abs(((frame_received->_ball.getPosition().getX())+6000.0)/(6000.0/(max_y/2.0)));
+        double bally = abs(((frame_received->_ball.getPosition().getY())-4700)/(4700.0/(max_x/2.0)));
         ball->setPosition(bally - ballRadius, ballx - ballRadius);
         ball->setOutlineColor(sf::Color::Black);
         ball->setOutlineThickness(12.f);
         window->draw(*ball);
+
+        ball_position = make_pair((int) bally/10.0, (int) ballx/10.0);
     }
 }
 
 void Samico::drawRobots(){
+    blueRobots_position.clear();
+    yellowRobots_position.clear();
 
     for(int x = 0; x < frame_received->_blueRobots.size(); x++){
         double t = frame_received->_blueRobots[x].getOrientation().value(), newx, newy;
@@ -88,8 +99,8 @@ void Samico::drawRobots(){
         sprintf(robotNumber, "%d", frame_received->_blueRobots[x].robotId());
         blueText[x].setString(robotNumber);
 
-        newx = abs(frame_received->_blueRobots[x].getPosition().getX() + 6000)/(6000.0/5200.0);
-        newy = abs(frame_received->_blueRobots[x].getPosition().getY() - 4700)/(4700.0/3700.0);
+        newx = abs(frame_received->_blueRobots[x].getPosition().getX() + 6000)/(6000.0/(max_y/2.0));
+        newy = abs(frame_received->_blueRobots[x].getPosition().getY() - 4700)/(4700.0/(max_x/2.0));
 
         blueRobots_shape[x].setPosition(newy - robotRadius, newx - robotRadius);
         blueText[x].setPosition(newy - 40, newx - 85);
@@ -97,6 +108,7 @@ void Samico::drawRobots(){
         if(frame_received->_blueRobots[x].getPosition().isValid()){
             window->draw(blueRobots_shape[x]);
             window->draw(blueText[x]);
+            blueRobots_position.push_back(make_pair((int) newy/10.0, (int) newx/10.0));
         }
     }
 
@@ -106,8 +118,8 @@ void Samico::drawRobots(){
         sprintf(robotNumber, "%d", frame_received->_yellowRobots[x].robotId());
         yellowText[x].setString(robotNumber);
 
-        newx = abs(frame_received->_yellowRobots[x].getPosition().getX() + 6000)/(6000.0/5200.0);
-        newy = abs(frame_received->_yellowRobots[x].getPosition().getY() - 4700)/(4700.0/3700.0);
+        newx = abs(frame_received->_yellowRobots[x].getPosition().getX() + 6000)/(6000.0/(max_y/2.0));
+        newy = abs(frame_received->_yellowRobots[x].getPosition().getY() - 4700)/(4700.0/(max_x/2.0));
 
         yellowRobots_shape[x].setPosition(newy - robotRadius, newx - robotRadius);
         yellowText[x].setPosition(newy - 40, newx - 85);
@@ -115,6 +127,7 @@ void Samico::drawRobots(){
         if(frame_received->_yellowRobots[x].getPosition().isValid()){
             window->draw(yellowRobots_shape[x]);
             window->draw(yellowText[x]);
+            yellowRobots_position.push_back(make_pair((int) newy/10.0, (int) newx/10.0));
         }
     }
 }
@@ -134,6 +147,44 @@ void Samico::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow *window, double zoo
     window->setView(view);
 }
 
+void Samico::setColisions(int index_at, bool isBlue){
+    for(int y = 0; y < blueRobots_position.size(); y++){
+        if(!isBlue || index_at != y){
+            for(int i = blueRobots_position[y].first - robotRadius/5; i <= blueRobots_position[y].first + robotRadius/5; i++){
+                for(int j = blueRobots_position[y].second - robotRadius/5; j <= blueRobots_position[y].second + robotRadius/5; j++){
+                    mat[i][j] = false;
+                }
+            }
+        }
+    }
+    for(int y = 0; y < yellowRobots_position.size(); y++){
+        if(isBlue || index_at != y){
+            for(int i = yellowRobots_position[y].first - robotRadius/5; i <= yellowRobots_position[y].first + robotRadius/5; i++){
+                for(int j = yellowRobots_position[y].second - robotRadius/5; j <= yellowRobots_position[y].second + robotRadius/5; j++){
+                    mat[i][j] = false;
+                }
+            }
+        }
+    }
+}
+
+void Samico::unsetColisions(int index_at, bool isBlue){
+    for(int y = 0; y < blueRobots_position.size(); y++){
+        for(int i = blueRobots_position[y].first - robotRadius/5; i <= blueRobots_position[y].first + robotRadius/5; i++){
+            for(int j = blueRobots_position[y].second - robotRadius/5; j <= blueRobots_position[y].second + robotRadius/5; j++){
+                mat[i][j] = true;
+            }
+        }
+    }
+    for(int y = 0; y < yellowRobots_position.size(); y++){
+        for(int i = yellowRobots_position[y].first - robotRadius/5; i <= yellowRobots_position[y].first + robotRadius/5; i++){
+            for(int j = yellowRobots_position[y].second - robotRadius/5; j <= yellowRobots_position[y].second + robotRadius/5; j++){
+                mat[i][j] = true;
+            }
+        }
+    }
+}
+
 void Samico::drawWindow(){
     bool moving = false;
     sf::Vector2f oldPos;
@@ -142,6 +193,7 @@ void Samico::drawWindow(){
         while(window->pollEvent(event)){
             if(event.type == sf::Event::Closed){
                 window->close();
+                exit(-1);
             }
             if (event.type == sf::Event::MouseWheelScrolled){
                 if (event.mouseWheelScroll.delta > 0)
@@ -185,16 +237,57 @@ void Samico::drawWindow(){
 
         drawBall();
         drawRobots();
+
+        for(int x = 0; x < blueRobots_position.size(); x++){
+            if(x == 0){
+            setColisions(x, true);
+            pathing.aStar(mat, blueRobots_position[x], ball_position, false, x);
+            vector<pair<int, int>> vec = pathing.getPath(false, x);
+            int sz = vec.size();
+            for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
+                sf::Vertex line[] =
+                {
+                    sf::Vertex(sf::Vector2f((float) vec[y].first * 10.0, (float) vec[y].second * 10.0)),
+                    sf::Vertex(sf::Vector2f((float) vec[y+deslocamentoLinhas].first * 10.0, (float) vec[y+deslocamentoLinhas].second * 10.0))
+                };
+                line[0].color = sf::Color::Red;
+                line[1].color = sf::Color::Red;
+                window->draw(line, 2, sf::Lines);
+            }
+            unsetColisions(x, true);
+            }
+        }
+
+        for(int x = 0; x < yellowRobots_position.size(); x++){
+            if(x == 0){
+            setColisions(x, false);
+            pathing.aStar(mat, yellowRobots_position[x], ball_position, true, x);
+            vector<pair<int, int>> vec = pathing.getPath(true, x);
+            int sz = vec.size();
+            for(int y = 0; y < sz - deslocamentoLinhas; y+=deslocamentoLinhas){
+                sf::Vertex line[] =
+                {
+                    sf::Vertex(sf::Vector2f((float) vec[y].first * 10.0, (float) vec[y].second * 10.0)),
+                    sf::Vertex(sf::Vector2f((float) vec[y+deslocamentoLinhas].first * 10.0, (float) vec[y+deslocamentoLinhas].second * 10.0))
+                };
+                line[0].color = sf::Color::Red;
+                line[1].color = sf::Color::Red;
+                window->draw(line, 2, sf::Lines);
+            }
+
+            unsetColisions(x, false);
+            }
+        }
+
         window->display();
     }
 
 }
 
 void Samico::setFrame(Frame *newFrame){
-       cout<<frame_received->_qt_robosTime<<std::endl;
-       frame_received = newFrame;
-
-
+    frame_received = newFrame;
 }
 
-
+pathPlanner Samico::getPath(){
+    return pathing;
+}

@@ -34,7 +34,6 @@ public:
     void setTeamId(quint8 team_id) { _teamId=team_id; }
     quint32 robotId() const { return _robotId; }
     void setRobotId(quint32 robot_id)  { _robotId=robot_id;}
-    Position getRobotPosition();
     Velocity getRobotVelocity();
 
     QString name();

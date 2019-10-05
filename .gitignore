@@ -54,3 +54,5 @@ compile_commands.json
 *.pb.h
 
 *.qmake.stash
+./visao/visao/build/visao
+visao/visao/build/
