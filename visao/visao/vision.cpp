@@ -150,6 +150,39 @@ double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, dou
 
     return speed;
 }
+double getSpeedX(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
+    long double Vx = point_x - robot_x;
+    long double Vy = point_y - robot_y ;
+    printf("vetor x é: %.2Lf\n", Vx);
+    printf("vetor y é: %.2Lf\n", Vy);
+    printf("angulo é: %.2f\n", robotAngle);
+    long double theta= robotAngle;
+    long double vxSaida = Vx * cos(theta) + Vy * sin(theta);
+    printf("vetor xSaida é: %.2Lf\n", vxSaida);
+    if(sqrt(pow(Vx,2)+pow(Vy,2)) > 200.0 && vxSaida > 0) {
+        vxSaida = 0.5;
+    } else if(sqrt(pow(Vx,2)+pow(Vy,2)) > 200.0 && vxSaida < 0){
+        vxSaida = -0.5;
+    } else {
+        vxSaida = 0;
+    }
+    return vxSaida;
+}
+
+double getSpeedY(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
+    long double Vx = robot_x - point_x;
+    long double Vy = robot_y - point_y;
+    long double theta= robotAngle;
+    long double vySaida = Vx * cos(theta) - Vy * sin(theta);
+    if(sqrt(pow(Vx,2)+pow(Vy,2)) > 200.0 && vySaida > 0) {
+        vySaida = 0.5;
+    }else if(sqrt(pow(Vx,2)+pow(Vy,2)) > 200.0 && vySaida < 0){
+        vySaida = -0.5;
+    }else{
+        vySaida = 0;
+    }
+    return vySaida;
+}
 
 int main(){
     // opening ssl vision client
@@ -174,15 +207,20 @@ int main(){
                 setBallInfo(detection);
 
                 if(detection.robots_blue_size() != 0){
-                    for(int x = 0; x < 8; x++){
-
+                    // for(int x = 0; x < 8; x++){
+                        int x=0;
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
-                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                        //grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                        //                                           robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                        grSim_robot.angle = 0;
+                        grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
-
+                        
+                        grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                                                                  robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
                         grSim->sendPacket(grSim_robot);
-                    }
+                    // }
                 }
                 samico->setFrame(robotsInfo);
                 //grSim->sendPacket(grSim_robot);
