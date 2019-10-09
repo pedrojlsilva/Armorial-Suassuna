@@ -112,7 +112,7 @@ double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, dou
     vectorRobot2BallY = vectorRobot2BallY / modVectorRobot2Ball;
 
     long double vectorOriginX = 1;
-    double vectorOriginY = 0;
+    //double vectorOriginY = 0;
 
     long double angleOrigin2ball;
     long double angleRobot2Ball;
@@ -157,9 +157,10 @@ double getSpeedX(double robot_x, double robot_y, double point_x, double point_y,
     long double theta= robotAngle;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
     double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
-    if(moduloDistancia > 80.0) {
-        vxSaida = std::max(vxSaida,1.0);
-    } else if(moduloDistancia > 30.0 && moduloDistancia<80.0){
+    // if(moduloDistancia > 80.0) {
+    //     vxSaida = std::max(vxSaida,1.0);
+    // } else 
+     if(moduloDistancia > 30.0 ){ //&& moduloDistancia<80.0
         vxSaida = std::min(vxSaida*0.7, 1.0);
     } else {
         vxSaida = 0;
@@ -168,14 +169,15 @@ double getSpeedX(double robot_x, double robot_y, double point_x, double point_y,
 }
 
 double getSpeedY(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
-    long double Vx = (robot_x - point_x)/10.0;
-    long double Vy = (robot_y - point_y)/10.0;
+    long double Vx = (point_x - robot_x)/10.0;
+    long double Vy = (point_y - robot_y)/10.0;
     long double theta = robotAngle;
     double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-    if(moduloDistancia > 80.0) {
-        vySaida = std::max(vySaida,1.0);
-    }else if(moduloDistancia > 30.0 && moduloDistancia<80.0){
+    // if(moduloDistancia > 80.0) {
+    //     vySaida = std::max(vySaida,1.0);
+    // }else 
+    if(moduloDistancia > 30.0 ){ && moduloDistancia<80.0
         vySaida = std::min(vySaida*0.7, 1.0);
     }else{
         vySaida = 0;
@@ -210,16 +212,20 @@ int main(){
                         int x=0;
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
-                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                   robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                        
 
                         grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
                         
                         grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
-                        
-                        
+                        if(grSim_robot.vx != 0.0 && grSim_robot.vy != 0.0){
+                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(),
+                                                                   robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), 
+                                                                   robotsInfo->_blueRobots[0].getOrientation().value());
+                        }else{
+                            grSim_robot.angle = 0;
+                        }
                         grSim->sendPacket(grSim_robot);
                     // }
                 }
