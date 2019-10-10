@@ -6,6 +6,7 @@
         "vector": "cpp",
         "variant": "cpp",
         "regex": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "iostream": "cpp"
     }
 }

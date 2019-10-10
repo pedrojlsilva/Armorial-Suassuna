@@ -122,6 +122,10 @@ void samico_drawThread(){
     samico->drawWindow();
 }
 
+bool isInLimit(int x, int y){
+    return ((x >= -6000 && x <= 6000) && (y >= -4500 && y <= 4500));
+}
+
 double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, double point_y, double angleOrigin2Robot){
     long double vectorRobot2BallX = (point_x - robot_x);
     long double vectorRobot2BallY = (point_y - robot_y);
@@ -170,28 +174,21 @@ double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, dou
 
     return speed;
 }
+
 double getSpeedX(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
     long double Vx = (point_x - robot_x)/10.0;
     long double Vy = (point_y - robot_y)/10.0 ;
     long double theta= robotAngle;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
     double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
-<<<<<<< Updated upstream
-    // if(moduloDistancia > 80.0) {
-    //     vxSaida = std::max(vxSaida,1.0);
-    // } else 
+    double sinal = 1;
+    if(vxSaida < 0) sinal = -1;
      if(moduloDistancia > 30.0 ){ //&& moduloDistancia<80.0
-        vxSaida = std::min(vxSaida*0.7, 1.0);
-=======
-    if(moduloDistancia > 50.0) {
-        vxSaida = std::max(vxSaida,1.0);
-    } else if(moduloDistancia > 5.0 && moduloDistancia<50.0){
-        vxSaida = std::min(vxSaida, 1.0);
->>>>>>> Stashed changes
+        vxSaida = std::min(fabs(vxSaida)*0.7, 1.0);
     } else {
         vxSaida = 0;
     }
-    return vxSaida;
+    return fabs(vxSaida) * sinal;
 }
 
 double getSpeedY(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
@@ -200,22 +197,14 @@ double getSpeedY(double robot_x, double robot_y, double point_x, double point_y,
     long double theta = robotAngle;
     double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-<<<<<<< Updated upstream
-    // if(moduloDistancia > 80.0) {
-    //     vySaida = std::max(vySaida,1.0);
-    // }else 
-    if(moduloDistancia > 30.0 ){ && moduloDistancia<80.0
-        vySaida = std::min(vySaida*0.7, 1.0);
-=======
-    if(moduloDistancia > 50.0) {
-        vySaida = std::max(vySaida,1.0);
-    }else if(moduloDistancia > 5.0 && moduloDistancia<50.0){
-        vySaida = std::min(vySaida, 1.0);
->>>>>>> Stashed changes
+    double sinal = 1;
+    if(vySaida < 0) sinal = -1;
+    if(moduloDistancia > 30.0 ){ //&& moduloDistancia<80.0
+        vySaida = std::min(fabs(vySaida)*0.7, 1.0);
     }else{
         vySaida = 0;
     }
-    return vySaida;
+    return fabs(vySaida) * sinal;
 }
 
 int main(){
@@ -241,32 +230,29 @@ int main(){
                 setBallInfo(detection);
 
                 if(detection.robots_blue_size() != 0){
+                        int x = 0;
                     // for(int x = 0; x < 8; x++){
-                        int x=0;
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
-<<<<<<< Updated upstream
-                        
-
-=======
                         grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                    robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
->>>>>>> Stashed changes
-                        grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
-                        grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
-<<<<<<< Updated upstream
-                        if(grSim_robot.vx != 0.0 && grSim_robot.vy != 0.0){
-                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(),
-                                                                   robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), 
-                                                                   robotsInfo->_blueRobots[0].getOrientation().value());
-                        }else{
-                            grSim_robot.angle = 0;
-                        }
-=======
                         
->>>>>>> Stashed changes
+                        /* tentando fazer a variacao para chegar na traseira da bola */
+                        double variacao;
+
+                        if(robotsInfo->_ball.getPosition().getX() <= 0){
+                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = 10;
+                            else variacao = -10;
+                        }else{
+                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = -10;
+                            else variacao = 10;
+                        }
+
+                        grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                        grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                        
                         grSim->sendPacket(grSim_robot);
                     // }
                 }
