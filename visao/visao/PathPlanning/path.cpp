@@ -324,7 +324,7 @@ void pathPlanner::aStar(bool **grid, pair<int, int> &src, pair<int, int> &dest, 
 vector<pair<int, int>> pathPlanner::getPath(bool isYellow, int index){
     vector<pair<int, int>> optimize;
     int size;
-
+/*
     if(isYellow && aStar_yellow[index].size() != 0){
         size = aStar_yellow[index].size();
         optimize.push_back(aStar_yellow[index][0]);
@@ -365,7 +365,7 @@ vector<pair<int, int>> pathPlanner::getPath(bool isYellow, int index){
         }
         aStar_blue[index] = optimize;
     }
-
-    if(isYellow) return optimize;
+*/
+    if(isYellow) return aStar_yellow[index];
     else return aStar_blue[index];
 }

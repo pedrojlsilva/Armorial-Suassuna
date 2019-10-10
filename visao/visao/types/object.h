@@ -52,6 +52,7 @@ public:
     void setKalman(bool enable){enableKalman = enable;}
     void setLoss(bool enable){enableLoss = enable;}
     void setNoise(bool enable){enableNoise = enable;}
+    void predict();
     void setUnknown();
     bool checkNoise();
     bool checkLoss();

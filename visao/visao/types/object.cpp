@@ -98,11 +98,17 @@ void Object::update(double confidence, Position pos, Angle ori) {
             _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
             _position.setPosition(_kalmanFilter.getPosition().getX(), _kalmanFilter.getPosition().getY()); // pega a posição retornada pelo kalman
             _orientation.setValue(ori.value()); // dou update no angulo do robo
+        }else{
+            predict(); // quando estou em noise, tento fazer predições da movimentação do robô
         }
     }
 
     //_mutex.unlock();
 
+}
+
+void Object::predict(){
+    _kalmanFilter.predict();
 }
 
 void Object::setUnknown() {
@@ -117,7 +123,7 @@ void Object::setUnknown() {
 
         _orientation = Angle(false, 0);
 
-        _zero = true;
+        // _zero = true;
 
         //updateToSensor();
 

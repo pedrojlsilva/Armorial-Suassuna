@@ -5,6 +5,7 @@
         "string": "cpp",
         "vector": "cpp",
         "variant": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "stdexcept": "cpp"
     }
 }

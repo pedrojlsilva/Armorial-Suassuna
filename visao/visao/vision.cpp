@@ -40,6 +40,7 @@ Robot *aux;
 Samico *samico = new Samico();
 
 void setRobotsInfo(SSL_DetectionFrame &detection){
+    bool visited[maxRobots];
     int qt_blueRobots = detection.robots_blue_size();
     int qt_yellowRobots = detection.robots_yellow_size();
     quint32 camera_id = detection.camera_id();
@@ -49,21 +50,38 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
 
     // loop para checar se o robo esta perdido ou ruidoso (invalidando a posicao)
     for(int x = 0; x < qt_robosTime; x++){
-        if(robotsInfo->_blueRobots[x].checkLoss() || !robotsInfo->_blueRobots[x].checkNoise()) robotsInfo->_blueRobots[x]._position.setInvalid();
+        // robos azuis
+        if(robotsInfo->_blueRobots[x].checkLoss() || !robotsInfo->_blueRobots[x].checkNoise()){
+            robotsInfo->_blueRobots[x]._position.setInvalid();
+        }
+        // robos amarelos
+        if(robotsInfo->_yellowRobots[x].checkLoss() || !robotsInfo->_yellowRobots[x].checkNoise()){
+            robotsInfo->_yellowRobots[x]._position.setInvalid();
+        }
     }
 
+    memset(visited, false, sizeof(visited)); // clear visited robots
     for(int x = 0; x < qt_blueRobots; x++){
         quint32 id = detection.robots_blue(x).robot_id();
 
         if(!(id < maxRobots)){
             throw std::runtime_error("ID error, check setRobotsInfo");
         }
+
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
 
         if(robotsInfo->_blueRobots[id]._position.isValid() || (robotsInfo->_blueRobots[id].checkNoise() && !robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
             robotsInfo->_blueRobots[id].setRobotId(id);
             robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
+        }
+
+        visited[id] = true; // mark as visited
+    }
+    for(int x = 0; x < maxRobots && qt_blueRobots != 0; x++){
+        if(!visited[x] && !robotsInfo->_blueRobots[x].checkLoss()){
+            // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
+            robotsInfo->_blueRobots[x].predict();
         }
     }
 
@@ -75,19 +93,20 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         }
         Position *pos_aux = new Position(true, detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_yellow(x).orientation());
+
         if(robotsInfo->_yellowRobots[id]._position.isValid() || (robotsInfo->_yellowRobots[id].checkNoise() && robotsInfo->_yellowRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
             robotsInfo->_yellowRobots[id].setRobotId(id);
             robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
         }
     }
+
 }
 
 void setBallInfo(SSL_DetectionFrame &detection){
-    if(detection.balls_size() > 0){
+    if(detection.balls_size() > 0){ // potencial gigante de erro aqui, verificar depois
         Position *pos_aux = new Position(true, detection.balls(0).x(), detection.balls(0).y());
         Angle *angle_aux = new Angle(true, 0);
         robotsInfo->_ball.update(100, *pos_aux, *angle_aux);
-
     }
 }
 
@@ -157,11 +176,18 @@ double getSpeedX(double robot_x, double robot_y, double point_x, double point_y,
     long double theta= robotAngle;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
     double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
+<<<<<<< Updated upstream
     // if(moduloDistancia > 80.0) {
     //     vxSaida = std::max(vxSaida,1.0);
     // } else 
      if(moduloDistancia > 30.0 ){ //&& moduloDistancia<80.0
         vxSaida = std::min(vxSaida*0.7, 1.0);
+=======
+    if(moduloDistancia > 50.0) {
+        vxSaida = std::max(vxSaida,1.0);
+    } else if(moduloDistancia > 5.0 && moduloDistancia<50.0){
+        vxSaida = std::min(vxSaida, 1.0);
+>>>>>>> Stashed changes
     } else {
         vxSaida = 0;
     }
@@ -174,11 +200,18 @@ double getSpeedY(double robot_x, double robot_y, double point_x, double point_y,
     long double theta = robotAngle;
     double vySaida = (Vx * cos(theta) - Vy * sin(theta))/100.0;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
+<<<<<<< Updated upstream
     // if(moduloDistancia > 80.0) {
     //     vySaida = std::max(vySaida,1.0);
     // }else 
     if(moduloDistancia > 30.0 ){ && moduloDistancia<80.0
         vySaida = std::min(vySaida*0.7, 1.0);
+=======
+    if(moduloDistancia > 50.0) {
+        vySaida = std::max(vySaida,1.0);
+    }else if(moduloDistancia > 5.0 && moduloDistancia<50.0){
+        vySaida = std::min(vySaida, 1.0);
+>>>>>>> Stashed changes
     }else{
         vySaida = 0;
     }
@@ -212,13 +245,18 @@ int main(){
                         int x=0;
                         grSim_robot.id = x;
                         grSim_robot.isYellow = false;
+<<<<<<< Updated upstream
                         
 
+=======
+                        grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
+                                                                   robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+>>>>>>> Stashed changes
                         grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
-                        
                         grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                   robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+<<<<<<< Updated upstream
                         if(grSim_robot.vx != 0.0 && grSim_robot.vy != 0.0){
                         grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY(),
                                                                    robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), 
@@ -226,6 +264,9 @@ int main(){
                         }else{
                             grSim_robot.angle = 0;
                         }
+=======
+                        
+>>>>>>> Stashed changes
                         grSim->sendPacket(grSim_robot);
                     // }
                 }
