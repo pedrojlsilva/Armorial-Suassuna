@@ -241,17 +241,24 @@ int main(){
                         double variacao;
 
                         if(robotsInfo->_ball.getPosition().getX() <= 0){
-                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = 10;
-                            else variacao = -10;
+                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = 30;
+                            else variacao = -30;
                         }else{
-                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = -10;
-                            else variacao = 10;
+                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = -30;
+                            else variacao = 30;
                         }
 
+                        double deltax = robotsInfo->_blueRobots[x].getPosition().getX() - robotsInfo->_ball.getPosition().getX();
+                        double deltay = robotsInfo->_blueRobots[x].getPosition().getY() - robotsInfo->_ball.getPosition().getY();
+                        double deltaxy = deltax / deltay;
+
+                        double variacao2 = ((deltax + variacao) / deltaxy) - deltay;
+                        
+
                         grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY() + variacao2, robotsInfo->_blueRobots[x].getOrientation().value());
                         grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
+                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY() + variacao2, robotsInfo->_blueRobots[x].getOrientation().value());
                         
                         grSim->sendPacket(grSim_robot);
                     // }
