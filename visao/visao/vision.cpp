@@ -176,14 +176,14 @@ double getSpeedRotateToPoint(double robot_x, double robot_y, double point_x, dou
 }
 
 double getSpeedX(double robot_x, double robot_y, double point_x, double point_y, double robotAngle){
-    long double Vx = (point_x - robot_x)/10.0;
-    long double Vy = (point_y - robot_y)/10.0 ;
-    long double theta= robotAngle;
+    long double Vx = (point_x - robot_x);
+    long double Vy = (point_y - robot_y);
+    long double theta = robotAngle;
     long double moduloDistancia = sqrt(pow(Vx,2)+pow(Vy,2));
-    double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/100.0;
+    double vxSaida = (Vx * cos(theta) + Vy * sin(theta))/1000.0;
     double sinal = 1;
     if(vxSaida < 0) sinal = -1;
-     if(moduloDistancia > 30.0 ){ //&& moduloDistancia<80.0
+     if(moduloDistancia > 30.0 ){ 
         vxSaida = std::min(fabs(vxSaida)*0.7, 1.0);
     } else {
         vxSaida = 0;
@@ -207,11 +207,37 @@ double getSpeedY(double robot_x, double robot_y, double point_x, double point_y,
     return fabs(vySaida) * sinal;
 }
 
+std::pair <long double, long double> getDestPoint(long double alvoX, long double alvoY, long double bolaX, long double bolaY ){
+    std::pair<long double, long double> alvo;
+    long double newX = 15;
+    long double deltaY=alvoY-bolaY;
+    long double deltaX=alvoX-bolaX;
+    long double proporcao = fabsl(deltaY/deltaX);
+    long double newY = proporcao*newX;
+
+    if(bolaX<alvoX) alvo.first = bolaX - newX;
+    
+    if(bolaX==alvoX) alvo.first = bolaX;
+    
+    if(bolaX>alvoX) alvo.first = bolaX + newX;
+
+
+    if(bolaY<alvoY) alvo.second = bolaY-newY;
+    if(bolaY==alvoY) alvo.second = bolaY;
+    if(bolaY>alvoY) alvo.second = bolaY + newY;
+
+
+
+    return alvo;
+}
+
 int main(){
     // opening ssl vision client
     RoboCupSSLClient client;
     client.open(true);
     SSL_WrapperPacket packet;
+
+    std::pair<long double, long double> destino;
 
     // samico draw thread
     samico->getWindow()->setActive(false); // deactivating samico in main thread
@@ -237,30 +263,17 @@ int main(){
                         grSim_robot.angle = getSpeedRotateToPoint(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
                                                                    robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(), robotsInfo->_blueRobots[x].getOrientation().value());
                         
-                        /* tentando fazer a variacao para chegar na traseira da bola */
-                        double variacao;
-
-                        if(robotsInfo->_ball.getPosition().getX() <= 0){
-                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = 30;
-                            else variacao = -30;
-                        }else{
-                            if(robotsInfo->_blueRobots[x].getPosition().getX() < robotsInfo->_ball.getPosition().getX()) variacao = -30;
-                            else variacao = 30;
-                        }
-
-                        double deltax = robotsInfo->_blueRobots[x].getPosition().getX() - robotsInfo->_ball.getPosition().getX();
-                        double deltay = robotsInfo->_blueRobots[x].getPosition().getY() - robotsInfo->_ball.getPosition().getY();
-                        double deltaxy = deltax / deltay;
-
-                        double variacao2 = ((deltax + variacao) / deltaxy) - deltay;
-                        
+                        destino = getDestPoint(robotsInfo->_blueRobots[1].getPosition().getX(), robotsInfo->_blueRobots[1].getPosition().getY(),
+                        robotsInfo->_ball.getPosition().getX(), robotsInfo->_ball.getPosition().getY());
+                        std::cout<< "destinob X:"<<robotsInfo->_ball.getPosition().getX()<<"    destinob Y:"<< robotsInfo->_ball.getPosition().getY()<<std::endl;
+                        std::cout<< "destino  X:"<<destino.first<<"    destino  Y:"<< destino.second<<std::endl;
 
                         grSim_robot.vx = getSpeedX(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY() + variacao2, robotsInfo->_blueRobots[x].getOrientation().value());
+                                                                  destino.first, destino.second, robotsInfo->_blueRobots[x].getOrientation().value());
                         grSim_robot.vy = getSpeedY(robotsInfo->_blueRobots[x].getPosition().getX(), robotsInfo->_blueRobots[x].getPosition().getY(),
-                                                                  robotsInfo->_ball.getPosition().getX() + variacao, robotsInfo->_ball.getPosition().getY() + variacao2, robotsInfo->_blueRobots[x].getOrientation().value());
+                                                                  destino.first, destino.second, robotsInfo->_blueRobots[x].getOrientation().value());
                         
-                        grSim->sendPacket(grSim_robot);
+                        //grSim->sendPacket(grSim_robot);
                     // }
                 }
                 samico->setFrame(robotsInfo);
