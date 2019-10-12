@@ -1,0 +1,6 @@
+Discrete-time PID Controller Implementation:
+    https://www.scilab.org/discrete-time-pid-controller-implementation
+
+
+Fundamentals of cascade control
+    https://www.controleng.com/articles/fundamentals-of-cascade-control/
