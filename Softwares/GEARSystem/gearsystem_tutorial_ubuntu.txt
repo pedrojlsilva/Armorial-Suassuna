@@ -1,0 +1,47 @@
+﻿--> Partindo de um Ubuntu 18.04 zerado
+
+sudo apt-get update
+sudo apt-get upgrade
+
+reboot
+
+--> Instalando a biblioteca GEARSystem:
+
+sudo apt-get install build-essential qt5-default qtcreator omniorb omniidl omniorb-nameserver libomniorb4-dev
+
+--> Faça o download do GEARSystem e extraia em uma pasta GEARSystem
+--> https://warthog.assembla.com/spaces/warthog-dia/subversion/source/HEAD/WRTools/GEARSystem/trunk
+
+cd GEARSystem
+sh build/corba_skeletons.sh
+qmake install_path=/usr/lib/
+make -j4
+sudo sh install.sh
+
+--> Aqui vc já tem o GEARSystem instalado e deve conseguir linkar seus programas usando -lGEARSystem -lomniORB4 -lomnithread -lQt5Core -lpthread
+
+
+--> Instalando o WRBackbone (semelhante para outros softwares do WR)
+
+--> Faça o download do WRBackbone e extraia em uma pasta WRBackbone
+--> https://warthog.assembla.com/spaces/warthog-dia/subversion/source/HEAD/WRTools/WRBackbone/trunk
+
+cd WRBackbone
+qmake
+make -j4
+
+--> Aqui vc tem o WRBackbone compilado e pronto para rodar (ainda não vai funcionar pq falta rodar o servidor do CORBA)
+
+
+--> Configurando e inicializando o servidor do CORBA:
+
+sudo systemctl stop omniorb4-nameserver
+
+Adicione essa linha ao final do arquivo: /etc/omniORB.cfg: InitRef = NameService=corbaname::127.0.0.1:2809
+
+sudo rm -rf /var/lib/omniorb/*
+
+sudo systemctl enable omniorb4-nameserver
+sudo systemctl start omniorb4-nameserver
+
+--> A partir daqui vc já consegue executar o WRBackbone e desenvolver seus programas que utilizam o GEARSystem
