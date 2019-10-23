@@ -61,8 +61,8 @@ Angle Object::getOrientation() {
 }
 
 void Object::setFilterTimes(double time){
-    this->_lossFilter.setFilterTime(time);
-    this->_noiseFilter.setFilterTime(time);
+    _lossFilter.setFilterTime(time);
+    _noiseFilter.setFilterTime(time);
 }
 
 double Object::getConfidence() {
