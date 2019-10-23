@@ -10,6 +10,6 @@ class Loss{
         void setFilterTime(double time);
 	private:
         double filterTime = 300.0;
-        QTimer temporizer;
+        QTimer *temporizer = new QTimer();
 };
 #endif
