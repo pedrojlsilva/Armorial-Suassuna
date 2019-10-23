@@ -73,7 +73,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
 
-        if(robotsInfo->_blueRobots[id]._position.isValid() || (robotsInfo->_blueRobots[id].checkNoise() && !robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
+        if(pos_aux->isValid() || (robotsInfo->_blueRobots[id].checkNoise() && !robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
             robotsInfo->_blueRobots[id].setRobotId(id);
             robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
         }
@@ -96,7 +96,7 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         Position *pos_aux = new Position(true, detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_yellow(x).orientation());
 
-        if(robotsInfo->_yellowRobots[id]._position.isValid() || (robotsInfo->_yellowRobots[id].checkNoise() && robotsInfo->_yellowRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
+        if(pos_aux->isValid() || (robotsInfo->_yellowRobots[id].checkNoise() && robotsInfo->_yellowRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
             robotsInfo->_yellowRobots[id].setRobotId(id);
             robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
         }
