@@ -46,7 +46,11 @@ SOURCES += \
     mrctimer.cpp
     samico.cpp \
     entity/entity.cpp \
-    entity/armorialvisionclient/armorialvisionclient.cpp
+    entity/armorialvisionclient/armorialvisionclient.cpp \
+    armorialvisionupdater.cpp \
+    entity/armorialvisionupdater/armorialvisionupdater.cpp \
+    fieldareas.cpp \
+    utils/fieldareas.cpp
 
 
 
@@ -70,7 +74,8 @@ DISTFILES += \
     include/3rd_party/protobuf/protobuf.sh \
     utils/arial.ttf \
     utils/bluerobot.png \
-    utils/yellowrobot.png
+    utils/yellowrobot.png \
+    utils/arial.ttf
 
 
 
@@ -107,5 +112,10 @@ HEADERS += \
     mrctimer.h
     samico.h \
     entity/entity.h \
-    entity/armorialvisionclient/armorialvisionclient.h
+    entity/armorialvisionclient/armorialvisionclient.h \
+    armorialvisionupdater.h \
+    entity/armorialvisionupdater/armorialvisionupdater.h \
+    fieldareas.h \
+    utils/fieldareas.h \
+    utils/color.h
 

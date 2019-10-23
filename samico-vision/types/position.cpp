@@ -14,7 +14,15 @@ Position::~Position(){
 
 Position::Position(bool known, float newX, float newY) {
 
-    (known == true) ? setPosition(newX, newY) : setUnknown();
+    (known == true) ? setPosition(newX, newY, 0.0) : setUnknown();
+
+}
+
+
+
+Position::Position(bool known, float newX, float newY, float newZ) {
+
+    (known == true) ? setPosition(newX, newY, newZ) : setUnknown();
 
 }
 
@@ -25,11 +33,12 @@ float Position::getX() { return(_x); }
 float Position::getY() { return(_y); }
 
 
-void  Position::setPosition(float newX, float newY) {
+void  Position::setPosition(float newX, float newY, float newZ) {
 
     // Sets the coordinates
     _x = newX;
     _y = newY;
+    _z = newZ;
 
     // Sets as a valid known position
     _isValid   = true;
@@ -49,6 +58,14 @@ void  Position::setPositionX(float newX) {
 void  Position::setPositionY(float newY) {
     // Sets the coordinates
     _y = newY;
+    // Sets as a valid known position
+    _isValid   = true;
+    _unknown = false;
+
+}
+void  Position::setPositionZ(float newZ) {
+    // Sets the coordinates
+    _z = newZ;
     // Sets as a valid known position
     _isValid   = true;
     _unknown = false;
