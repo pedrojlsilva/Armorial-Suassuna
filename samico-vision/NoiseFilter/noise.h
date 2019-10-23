@@ -1,7 +1,6 @@
 #ifndef NOISE_H
 #define NOISE_H
 #include <time.h>
-#include <QTimer>
 
 class Noise{
 	public:
@@ -13,7 +12,7 @@ class Noise{
 		void setFilterTime(double time);
 	private:
         double filterTime = 300.0;
-		QTimer *temporizer = new QTimer();
+		double temporizer;
         bool initialized = false;
 };
 

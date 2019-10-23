@@ -13,16 +13,14 @@ void Loss::setFilterTime(double time){
 
 bool Loss::lossFilter(bool update){
     if(update){
-        this->temporizer->start(filterTime);
+        temporizer = clock();
         return false; 
     }
 
-    bool ret = !(this->temporizer->isActive()); // se o temporizador não estiver ativo -> deu perda
-	
-    if(ret){
-        this->temporizer->start(filterTime);
+    bool ret = (((double)(clock() - temporizer)/100.0) >= filterTime);
+	if(ret){
+        temporizer = clock();
     }
-
     return ret;
 }
 

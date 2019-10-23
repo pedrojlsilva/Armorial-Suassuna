@@ -1,7 +1,6 @@
 #ifndef LOSS_H
 #define LOSS_H
 #include <time.h>
-#include <QTimer>
 
 class Loss{
     public:
@@ -10,6 +9,6 @@ class Loss{
         void setFilterTime(double time);
 	private:
         double filterTime = 300.0;
-        QTimer *temporizer = new QTimer();
+        double temporizer;
 };
 #endif
