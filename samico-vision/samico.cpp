@@ -237,7 +237,7 @@ void Samico::drawWindow(){
 
         drawBall();
         drawRobots();
-
+/*
         for(int x = 0; x < blueRobots_position.size(); x++){
             if(x == 0){
             setColisions(x, true);
@@ -278,7 +278,7 @@ void Samico::drawWindow(){
             unsetColisions(x, false);
             }
         }
-
+*/
         window->display();
     }
 
