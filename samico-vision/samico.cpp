@@ -78,7 +78,7 @@ Samico::Samico()
 
 void Samico::drawBall(){
     if(frame_received->_ball.getBallPosition().isValid()){
-        double ballx = abs(((frame_received->_ball.getPosition().getX())+6000.0)/(6000.0/(max_y/2.0)));
+        double ballx = abs(((frame_received->_ball.getPosition().getX())-6000.0)/(6000.0/(max_y/2.0)));
         double bally = abs(((frame_received->_ball.getPosition().getY())-4700)/(4700.0/(max_x/2.0)));
         ball->setPosition(bally - ballRadius, ballx - ballRadius);
         ball->setOutlineColor(sf::Color::Black);
@@ -99,7 +99,7 @@ void Samico::drawRobots(){
         sprintf(robotNumber, "%d", frame_received->_blueRobots[x].robotId());
         blueText[x].setString(robotNumber);
 
-        newx = abs(frame_received->_blueRobots[x].getPosition().getX() + 6000)/(6000.0/(max_y/2.0));
+        newx = abs(frame_received->_blueRobots[x].getPosition().getX() - 6000)/(6000.0/(max_y/2.0));
         newy = abs(frame_received->_blueRobots[x].getPosition().getY() - 4700)/(4700.0/(max_x/2.0));
 
         blueRobots_shape[x].setPosition(newy - robotRadius, newx - robotRadius);
@@ -118,7 +118,7 @@ void Samico::drawRobots(){
         sprintf(robotNumber, "%d", frame_received->_yellowRobots[x].robotId());
         yellowText[x].setString(robotNumber);
 
-        newx = abs(frame_received->_yellowRobots[x].getPosition().getX() + 6000)/(6000.0/(max_y/2.0));
+        newx = abs(frame_received->_yellowRobots[x].getPosition().getX() - 6000)/(6000.0/(max_y/2.0));
         newy = abs(frame_received->_yellowRobots[x].getPosition().getY() - 4700)/(4700.0/(max_x/2.0));
 
         yellowRobots_shape[x].setPosition(newy - robotRadius, newx - robotRadius);
