@@ -4,7 +4,7 @@
 
 #include <types/object.h>
 
-class Robot:public Object{
+class Robot: public Object{
 
 private:
 

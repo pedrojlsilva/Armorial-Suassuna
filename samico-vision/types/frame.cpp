@@ -11,12 +11,16 @@ Frame::Frame(int qt_robosTime, int tempoFiltros)
             _blueRobots[x].setLoss(true);
             _blueRobots[x].setNoise(true);
             _blueRobots[x].setFilterTimes(tempoFiltros);
+            _blueRobots[x]._position.setValid();
+            _blueRobots[x].isValid = true;
 
             _yellowRobots.push_back(*aux);
             _yellowRobots[x].setKalman(true);
             _yellowRobots[x].setLoss(true);
             _yellowRobots[x].setNoise(true);
             _yellowRobots[x].setFilterTimes(tempoFiltros);
+            _yellowRobots[x]._position.setValid();
+            _yellowRobots[x].isValid = true;
     }
         _ball = new Ball();
         _ball.setKalman(true);

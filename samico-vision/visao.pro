@@ -42,7 +42,8 @@ SOURCES += \
     include/3rd_party/grSim_Packet.pb.cc \
     include/3rd_party/grSim_Replacement.pb.cc \
     types/frame.cpp \
-    samico.cpp
+    samico.cpp \
+    mrctimer.cpp
 
 
 
@@ -99,5 +100,6 @@ HEADERS += \
     include/3rd_party/grSim_Packet.pb.h \
     include/3rd_party/grSim_Replacement.pb.h \
     types/frame.h \
-    samico.h
+    samico.h \
+    mrctimer.h
 

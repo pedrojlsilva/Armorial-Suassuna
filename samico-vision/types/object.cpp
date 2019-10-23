@@ -18,6 +18,8 @@ Object::Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseF
 
     _confidence = 0.0;
 
+    isValid = true;
+
 }
 
 Object::~Object() {
@@ -78,22 +80,34 @@ double Object::getConfidence() {
 }
 
 bool Object::checkNoise(){
-    return _noiseFilter.noiseFilter();
+    bool ret = _noiseFilter.noiseFilter();
+    return ret;
 }
 
 bool Object::checkLoss(){
-    return _lossFilter.lossFilter(false);
+    bool ret = _lossFilter.lossFilter(false);
+
+    if(ret == false && isValid){ // se n deu perda pode ser validado
+        _position.setValid();
+    }else{
+        isValid = false;
+        _position.setInvalid();
+    }
+
+    return ret;
 }
 
 void Object::update(double confidence, Position pos, Angle ori) {
    // _mutex.lockForWrite();
+    isValid = true;
+
     if(!_noiseFilter.isInitialized()){
         _noiseFilter.initCounter();
         _position.setInvalid(); // como o filtro de ruido ainda nao terminou
                                 // é necessário invalidar a posição até que ele acabe
     }else{
         if(_noiseFilter.noiseFilter()){ // caso o filtro tenha terminado o tempo
-            _position.setValid();
+            isValid = true;
             _lossFilter.lossFilter(true); // dou update no filtro de perda
             _kalmanFilter.iterate(pos); // inicializa mais uma iteração no kalman
             _position.setPosition(_kalmanFilter.getPosition().getX(), _kalmanFilter.getPosition().getY()); // pega a posição retornada pelo kalman

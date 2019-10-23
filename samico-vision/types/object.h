@@ -12,7 +12,7 @@ class Object
 {
 
 private:
-    bool enableKalman;
+    bool enableKalman = true;
     bool enableLoss = true;
     bool enableNoise = true;
     double _confidence;
@@ -24,10 +24,9 @@ private:
     bool _zero;
 
     // Filters
-
-    Loss _lossFilter = Loss();
     KalmanFilter2D _kalmanFilter = KalmanFilter2D();
     Noise _noiseFilter = Noise();
+    Loss _lossFilter = Loss();
 
     // Brute velocity calc
 
@@ -40,7 +39,7 @@ public:
     virtual ~Object();
     void update(double confidence, Position pos, Angle ori);
 
-
+    bool isValid;
     Position _position = Position();
     Velocity _velocity =  Velocity();
     Angle _orientation = Angle();
@@ -56,8 +55,6 @@ public:
     void setUnknown();
     bool checkNoise();
     bool checkLoss();
-
-
 
 
 };

@@ -5,10 +5,12 @@
 
 Noise::Noise(){
     filterTime = 300.0;
+    temporizer = new MRCTimer(filterTime);
 }
 
 void Noise::setFilterTime(double time){
     filterTime = time;
+    temporizer = new MRCTimer(filterTime);
 }
 
 void Noise::setOff(){
@@ -20,16 +22,17 @@ bool Noise::isInitialized(){
 }
 
 void Noise::initCounter(){
-	this->temporizer = clock();
+    temporizer->update();
 	this->initialized = true;
 }
 
 bool Noise::noiseFilter(){
-    if(((double)(clock() - temporizer)/100.0) >= filterTime){
-		return true;
-	}
+    bool ret = temporizer->checkTimerEnd();
 
-	return false;
+    if(ret){
+        return true;
+    }
+    return false;
 }
 
 /* end of noise filter methods */

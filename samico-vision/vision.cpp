@@ -19,7 +19,7 @@
 #include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
 
 #define qt_robosTime 8
-#define tempoFiltros 300
+#define tempoFiltros 300.0
 #define maxRobots 8
 
 #define printarInfoRobos false
@@ -46,23 +46,14 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
     int qt_blueRobots = detection.robots_blue_size();
     int qt_yellowRobots = detection.robots_yellow_size();
     quint32 camera_id = detection.camera_id();
+
     if(qt_blueRobots != 0) robotsInfo->_qt_blue=qt_blueRobots;
     if(qt_yellowRobots != 0) robotsInfo->_qt_yellow=qt_yellowRobots;
+
     robotsInfo->_camera_id=camera_id;
 
-    // loop para checar se o robo esta perdido ou ruidoso (invalidando a posicao)
-    for(int x = 0; x < qt_robosTime; x++){
-        // robos azuis
-        if(robotsInfo->_blueRobots[x].checkLoss() || !robotsInfo->_blueRobots[x].checkNoise()){
-            robotsInfo->_blueRobots[x]._position.setInvalid();
-        }
-        // robos amarelos
-        if(robotsInfo->_yellowRobots[x].checkLoss() || !robotsInfo->_yellowRobots[x].checkNoise()){
-            robotsInfo->_yellowRobots[x]._position.setInvalid();
-        }
-    }
-
     memset(visited, false, sizeof(visited)); // clear visited robots
+
     for(int x = 0; x < qt_blueRobots; x++){
         quint32 id = detection.robots_blue(x).robot_id();
 
@@ -73,13 +64,12 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
 
-        if(pos_aux->isValid() || (robotsInfo->_blueRobots[id].checkNoise() && !robotsInfo->_blueRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
-            robotsInfo->_blueRobots[id].setRobotId(id);
-            robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
-        }
+        robotsInfo->_blueRobots[id].setRobotId(id);
+        robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
 
         visited[id] = true; // mark as visited
     }
+
     for(int x = 0; x < maxRobots && qt_blueRobots != 0; x++){
         if(!visited[x] && !robotsInfo->_blueRobots[x].checkLoss()){
             // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
@@ -96,18 +86,16 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         Position *pos_aux = new Position(true, detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_yellow(x).orientation());
 
-        if(pos_aux->isValid() || (robotsInfo->_yellowRobots[id].checkNoise() && robotsInfo->_yellowRobots[id].checkLoss())){// se a posição for valida, ele passa para frame
-            robotsInfo->_yellowRobots[id].setRobotId(id);
-            robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
-        }
+        robotsInfo->_yellowRobots[id].setRobotId(id);
+        robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
     }
 
     for(int x = 0; x < maxRobots && qt_yellowRobots != 0; x++){
-            if(!visited[x] && !robotsInfo->_yellowRobots[x].checkLoss()){
-                // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
-                robotsInfo->_yellowRobots[x].predict();
-            }
+        if(!visited[x] && !robotsInfo->_yellowRobots[x].checkLoss()){
+            // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
+            robotsInfo->_yellowRobots[x].predict();
         }
+    }
 
 }
 

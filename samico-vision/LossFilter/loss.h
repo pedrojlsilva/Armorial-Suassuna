@@ -1,14 +1,14 @@
 #ifndef LOSS_H
 #define LOSS_H
-#include <time.h>
+#include <mrctimer.h>
 
 class Loss{
     public:
         Loss();
         bool lossFilter(bool update);
         void setFilterTime(double time);
-	private:
+    private:
+        MRCTimer *temporizer;
         double filterTime = 300.0;
-        double temporizer;
 };
 #endif
