@@ -20,12 +20,12 @@ bool Noise::isInitialized(){
 }
 
 void Noise::initCounter(){
-	this->temporizer = clock();
+	this->temporizer.start(filterTime);
 	this->initialized = true;
 }
 
 bool Noise::noiseFilter(){
-    if(((double)(clock() - temporizer)/100.0) >= filterTime){
+    if(!(this->temporizer.isActive())){ // se o temporizador não estiver ativo -> terminou o filtro
 		return true;
 	}
 
