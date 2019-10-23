@@ -44,6 +44,10 @@ SOURCES += \
     types/frame.cpp \
     samico.cpp \
     mrctimer.cpp
+    samico.cpp \
+    entity/entity.cpp \
+    samicovisionclient.cpp \
+    entity/samicovisionclient.cpp
 
 
 
@@ -102,4 +106,8 @@ HEADERS += \
     types/frame.h \
     samico.h \
     mrctimer.h
+    samico.h \
+    entity/entity.h \
+    samicovisionclient.h \
+    entity/samicovisionclient.h
 
