@@ -102,6 +102,13 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         }
     }
 
+    for(int x = 0; x < maxRobots && qt_yellowRobots != 0; x++){
+            if(!visited[x] && !robotsInfo->_yellowRobots[x].checkLoss()){
+                // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
+                robotsInfo->_yellowRobots[x].predict();
+            }
+        }
+
 }
 
 void setBallInfo(SSL_DetectionFrame &detection){
