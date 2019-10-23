@@ -106,11 +106,6 @@ void setBallInfo(SSL_DetectionFrame &detection){
 }
 
 
-void samico_drawThread(){
-    samico->drawWindow();
-}
-
-
 
 int main(){
     // opening ssl vision client

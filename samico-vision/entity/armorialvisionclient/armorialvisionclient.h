@@ -1,17 +1,20 @@
-#ifndef SAMICOVISIONCLIENT_H
-#define SAMICOVISIONCLIENT_H
-
+#ifndef ARMORIALVISIONCLIENT_H
+#define ARMORIALVISIONCLIENT_H
 #include <QHash>
 #include <QReadWriteLock>
-#include "entity.h"
+#include <./entity/eyebase.hh>
+#include <./entity/entity.h>
+#include <./include/timer.h>
 #include "include/3rd_party/robocup_ssl_client.h"
-#include "include/3rd_party/messages_robocup_ssl_wrapper.pb.h"
 
-class samicoVisionClient:public Entity
+
+#define CLIENT_DISCONNECTED_TIME 500 // ms
+
+class ArmorialVisionClient:public Entity
 {
 public:
-    samicoVisionClient(int visionPort = 10006);
-    ~samicoVisionClient();
+    ArmorialVisionClient(int visionPort = 10006);
+    ~ArmorialVisionClient();
 
     bool hasDetectionUpdate();
     bool hasGeometryUpdate();
@@ -25,7 +28,6 @@ public:
     void setVisionPort(int visionPort);
 
     QString name();
-
 private:
     void initialization();
     void loop();
@@ -54,4 +56,11 @@ private:
     bool _hasGeometryUpdate;
 };
 
-#endif // SAMICOVISIONCLIENT_H
+#endif // ARMORIALVISIONCLIENT_H
+
+
+
+
+
+
+

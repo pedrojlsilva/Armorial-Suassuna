@@ -46,8 +46,7 @@ SOURCES += \
     mrctimer.cpp
     samico.cpp \
     entity/entity.cpp \
-    samicovisionclient.cpp \
-    entity/samicovisionclient.cpp
+    entity/armorialvisionclient/armorialvisionclient.cpp
 
 
 
@@ -108,6 +107,5 @@ HEADERS += \
     mrctimer.h
     samico.h \
     entity/entity.h \
-    samicovisionclient.h \
-    entity/samicovisionclient.h
+    entity/armorialvisionclient/armorialvisionclient.h
 
