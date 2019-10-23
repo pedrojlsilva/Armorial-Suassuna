@@ -58,7 +58,8 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         quint32 id = detection.robots_blue(x).robot_id();
 
         if(!(id < maxRobots)){
-            throw std::runtime_error("ID error, check setRobotsInfo");
+            continue;
+            //throw std::runtime_error("ID error, check setRobotsInfo");
         }
 
         Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
@@ -81,7 +82,8 @@ void setRobotsInfo(SSL_DetectionFrame &detection){
         quint32 id = detection.robots_yellow(x).robot_id();
 
         if(!(id < maxRobots)){
-            throw std::runtime_error("ID error, check setRobotsInfo");
+            continue;
+            //throw std::runtime_error("ID error, check setRobotsInfo");
         }
         Position *pos_aux = new Position(true, detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
         Angle *angle_aux = new Angle(true, detection.robots_yellow(x).orientation());
