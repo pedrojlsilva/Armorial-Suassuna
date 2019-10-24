@@ -40,13 +40,11 @@ SOURCES += \
     include/3rd_party/grSim_Replacement.pb.cc \
     types/frame.cpp \
     samico.cpp \
-    mrctimer.cpp
+    mrctimer.cpp \
     samico.cpp \
     entity/entity.cpp \
-    entity/armorialvisionclient/armorialvisionclient.cpp \
-    armorialvisionupdater.cpp \
     entity/armorialvisionupdater/armorialvisionupdater.cpp \
-    utils/fieldareas.cpp
+    utils/fieldareas.cpp \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -99,13 +97,10 @@ HEADERS += \
     types/frame.h \
     samico.h \
     mrctimer.h \
-    types/object.h
+    types/object.h \
     samico.h \
     entity/entity.h \
     entity/armorialvisionclient/armorialvisionclient.h \
-    armorialvisionupdater.h \
-    entity/armorialvisionupdater/armorialvisionupdater.h \
-    fieldareas.h \
     utils/fieldareas.h \
     utils/color.h
 

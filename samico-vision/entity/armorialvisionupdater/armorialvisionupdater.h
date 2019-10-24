@@ -6,7 +6,6 @@
 #include <utils/fieldareas.h>
 #include <utils/color.h>
 #include <entity/entity.h>
-#include <types/types.h>
 #include "../armorialvisionclient/armorialvisionclient.h"
 
 #define MAX_ROBOTS 12
