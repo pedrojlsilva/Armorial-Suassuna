@@ -24,13 +24,10 @@ SOURCES += \
     KalmanFilter/matrix.cpp \
     LossFilter/loss.cpp \
     NoiseFilter/noise.cpp \
-	PathPlanning/path.cpp \
+    PathPlanning/path.cpp \
     grsSimulator/grsSimulator.cpp \
     Robot/robot.cpp \
-    types/angle.cpp \
     types/object.cpp \
-    types/position.cpp \
-    types/velocity.cpp \
     vision.cpp \
     include/3rd_party/messages_robocup_ssl_detection.pb.cc \
     include/3rd_party/netraw.cpp \
@@ -49,10 +46,7 @@ SOURCES += \
     entity/armorialvisionclient/armorialvisionclient.cpp \
     armorialvisionupdater.cpp \
     entity/armorialvisionupdater/armorialvisionupdater.cpp \
-    fieldareas.cpp \
     utils/fieldareas.cpp
-
-
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -86,16 +80,11 @@ HEADERS += \
     KalmanFilter/kalman.hpp \
     KalmanFilter/kalmanstate.h \
     KalmanFilter/matrix.h \
-	PathPlanning/path.h \
+    PathPlanning/path.h \
     grsSimulator/grsSimulator.h \
     LossFilter/loss.h \
     NoiseFilter/noise.h \
     Robot/robot.h \
-    types/angle.h \
-    types/object.h \
-    types/position.h \
-    types/types.h \
-    types/velocity.h \
     include/3rd_party/netraw.h \
     include/3rd_party/robocup_ssl_client.h \
     include/3rd_party/util.h \
@@ -109,7 +98,8 @@ HEADERS += \
     include/3rd_party/grSim_Replacement.pb.h \
     types/frame.h \
     samico.h \
-    mrctimer.h
+    mrctimer.h \
+    types/object.h
     samico.h \
     entity/entity.h \
     entity/armorialvisionclient/armorialvisionclient.h \

@@ -1,7 +1,5 @@
 #include "armorialvisionupdater.h"
 
-
-
 QString ArmorialVisionUpdater::name() {
     return "ArmorialVisionUpdater";
 }
@@ -16,16 +14,39 @@ ArmorialVisionUpdater::ArmorialVisionUpdater(ArmorialVisionClient *ArmorialVisio
     _sensor = new Sensor();
 
     // Initialize robot objects
+    QHash<int,Robot*> yellowRobots;
+    QHash<int,Robot*> blueRobots;
+    for(int id=0; id<MAX_ROBOTS; id++) {
+        Robot* yellowRobot = new Robot(Colors::YELLOW, _yellowTeamIndex, id, enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
+        yellowRobot->setSensor(_sensor);
+        yellowRobots.insert(id, yellowRobot);
 
-
+        Robot* blueRobot = new Robot(Colors::BLUE, _blueTeamIndex, id, enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
+        blueRobot->setSensor(_sensor);
+        blueRobots.insert(id, blueRobot);
+    }
+    _objRobots.insert(Colors::YELLOW, yellowRobots);
+    _objRobots.insert(Colors::BLUE, blueRobots);
 
     // Initialize ball object
-
+    _objBall = new Ball(enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
+    _objBall->setSensor(_sensor);
 
     // Initialize robot multi object filters
+    QHash<int,MultiObjectFilter*> yellowRobotsFilter;
+    QHash<int,MultiObjectFilter*> blueRobotsFilter;
+    for(int id=0; id<MAX_ROBOTS; id++) {
+        MultiObjectFilter* yellowRobotFilter = new MultiObjectFilter();
+        yellowRobotsFilter.insert(id, yellowRobotFilter);
 
+        MultiObjectFilter* blueRobotFilter = new MultiObjectFilter();
+        blueRobotsFilter.insert(id, blueRobotFilter);
+    }
+    _multiFilterRobots.insert(Colors::YELLOW, yellowRobotsFilter);
+    _multiFilterRobots.insert(Colors::BLUE, blueRobotsFilter);
 
     // Initialize ball multi object filtering
+    _multiFilterBall = new MultiObjectFilter();
 
 
     // Frequency
@@ -80,7 +101,7 @@ void ArmorialVisionUpdater::initialization() {
     // WRBackbone connect (as Sensor)
     _sensor->connect("127.0.0.1", 0);
     if(_sensor->isConnected())
-        cout << ">> WREye: Connected to WRBackbone.\n";
+        cout << ">> Armorial: Connected to WRBackbone.\n";
     else {
         cout << ">> WREye: [ERROR] Cannot connect to WRBackbone.\n";
         this->stopRunning();
@@ -373,7 +394,7 @@ void ArmorialVisionUpdater::processGeometryData(const SSL_GeometryData &geometry
     _sensor->setFieldBottomRightCorner(Position(true, (field.field_length()/2.0)*MM2METER, (-field.field_width()/2.0)*MM2METER, 0.0));
     _sensor->setRightPenaltyMark(Position(true, (field.field_length()/2.0 - areaRadius)*MM2METER, 0.0, 0.0));
     _sensor->setLeftPenaltyMark(Position(true, (-field.field_length()/2.0 + areaRadius)*MM2METER, 0.0, 0.0));
-    _sensor->setLeftGoalPosts(Position(true, (-field.field_length()/2.0)*MM2METER, (-field.goal_width()/2.0)*MM2METER, 0.0), Position(true, (-field.field_length()/2.0)*MM2METER, (field.goal_width()/2.0)*MM2METER, 0.0));
+    _sensor->setLeftGoalPosts(Position(true, (-field.field_length()/2.0)*MM2METER, (-field.egoal_width()/2.0)*MM2METER, 0.0), Position(true, (-field.field_length()/2.0)*MM2METER, (field.goal_width()/2.0)*MM2METER, 0.0));
     _sensor->setRightGoalPosts(Position(true, (field.field_length()/2.0)*MM2METER, (field.goal_width()/2.0)*MM2METER, 0.0), Position(true, (field.field_length()/2.0)*MM2METER, (-field.goal_width()/2.0)*MM2METER, 0.0));
     _sensor->setFieldCenterRadius(centerRadius*MM2METER);
     _sensor->setGoalArea(areaLength*MM2METER, areaWidth*MM2METER, areaRadius*MM2METER);

@@ -1,11 +1,13 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-
 #include <QReadWriteLock>
-#include "types/types.h"
+#include <QReadWriteLock>
+#include <GEARSystem/gearsystem.hh>
 #include "include/filters.h"
-#include <QReadWriteLock>
+#include "LossFilter/loss.h"
+#include "NoiseFilter/noise.h"
+
 
 
 class Object
