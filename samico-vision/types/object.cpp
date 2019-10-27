@@ -88,7 +88,7 @@ bool Object::checkLoss(){
     bool ret = _lossFilter.lossFilter(false);
 
     if(ret == false && isValid){ // se n deu perda pode ser validado
-        _position.setValid();
+//        _position.setValid();
     }else{
         isValid = false;
         _position.setInvalid();
@@ -137,9 +137,9 @@ void Object::setUnknown() {
 
         _orientation = Angle(false, 0);
 
-        // _zero = true;
+         _zero = true;
 
-        //updateToSensor();
+        updateToSensor();
 
     }
 

@@ -2,10 +2,9 @@
 #define ARMORIALVISIONCLIENT_H
 #include <QHash>
 #include <QReadWriteLock>
-#include <./entity/eyebase.hh>
-#include <./entity/entity.h>
-#include <./include/timer.h>
-#include "include/3rd_party/robocup_ssl_client.h"
+#include <entity/entity.h>
+#include <include/timer.h>
+#include <include/3rd_party/robocup_ssl_client.h>
 
 
 #define CLIENT_DISCONNECTED_TIME 500 // ms

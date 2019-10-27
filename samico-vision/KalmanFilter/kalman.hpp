@@ -3,9 +3,8 @@
 #define KALMANFILTER2D_H
 
 #include <QString>
-
+#include <GEARSystem/gearsystem.hh>
 #include "include/timer.h"
-#include "types/types.h"
 #include "kalmanstate.h"
 #include "matrix.h"
 

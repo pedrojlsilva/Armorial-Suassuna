@@ -22,6 +22,11 @@
 #ifndef EYEBASE_H
 #define EYEBASE_H
 
+
+#include "Robot/robot.h"
+#include "Ball/ball.h"
+
+
 class EyeClient;
 class EyeUpdater;
 

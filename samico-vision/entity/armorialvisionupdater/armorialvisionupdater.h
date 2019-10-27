@@ -3,10 +3,14 @@
 
 #include <QReadWriteLock>
 #include <GEARSystem/gearsystem.hh>
+#include <entity/entity.h>
+#include <entity/armorialvisionclient/armorialvisionclient.h>
 #include <utils/fieldareas.h>
 #include <utils/color.h>
-#include <entity/entity.h>
-#include "../armorialvisionclient/armorialvisionclient.h"
+
+#include <Robot/robot.h>
+#include <Ball/ball.h>
+
 
 #define MAX_ROBOTS 12
 #define MM2METER (1/1000.0)

@@ -38,7 +38,7 @@ public:
 
     QString name();
 
-    //void updateToSensor();
+    void updateToSensor();
 
     int getBattery() const;
     void setBattery(int battery);

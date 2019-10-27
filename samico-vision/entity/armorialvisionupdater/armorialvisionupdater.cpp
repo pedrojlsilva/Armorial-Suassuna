@@ -17,7 +17,7 @@ ArmorialVisionUpdater::ArmorialVisionUpdater(ArmorialVisionClient *ArmorialVisio
     QHash<int,Robot*> yellowRobots;
     QHash<int,Robot*> blueRobots;
     for(int id=0; id<MAX_ROBOTS; id++) {
-        Robot* yellowRobot = new Robot(Colors::YELLOW, _yellowTeamIndex, id, enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
+        Robot *yellowRobot = new Robot(Colors::YELLOW, _yellowTeamIndex, id, enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
         yellowRobot->setSensor(_sensor);
         yellowRobots.insert(id, yellowRobot);
 
@@ -32,21 +32,6 @@ ArmorialVisionUpdater::ArmorialVisionUpdater(ArmorialVisionClient *ArmorialVisio
     _objBall = new Ball(enableLossFilter, enableKalmanFilter, enableNoiseFilter, debugDetection);
     _objBall->setSensor(_sensor);
 
-    // Initialize robot multi object filters
-    QHash<int,MultiObjectFilter*> yellowRobotsFilter;
-    QHash<int,MultiObjectFilter*> blueRobotsFilter;
-    for(int id=0; id<MAX_ROBOTS; id++) {
-        MultiObjectFilter* yellowRobotFilter = new MultiObjectFilter();
-        yellowRobotsFilter.insert(id, yellowRobotFilter);
-
-        MultiObjectFilter* blueRobotFilter = new MultiObjectFilter();
-        blueRobotsFilter.insert(id, blueRobotFilter);
-    }
-    _multiFilterRobots.insert(Colors::YELLOW, yellowRobotsFilter);
-    _multiFilterRobots.insert(Colors::BLUE, blueRobotsFilter);
-
-    // Initialize ball multi object filtering
-    _multiFilterBall = new MultiObjectFilter();
 
 
     // Frequency
@@ -74,8 +59,8 @@ ArmorialVisionUpdater::~ArmorialVisionUpdater() {
 
 QList<Robot*> ArmorialVisionUpdater::getRobotObjects() const {
     // Generate robots list
-//    QList<Robot*> yellowRobots = _objRobots.value(Colors::YELLOW).values();
-//    QList<Robot*> blueRobots = _objRobots.value(Colors::BLUE).values();
+    QList<Robot*> yellowRobots = _objRobots.value(Colors::YELLOW).values();
+    QList<Robot*> blueRobots = _objRobots.value(Colors::BLUE).values();
 
     return QList<Robot*>(yellowRobots+blueRobots);
 }
@@ -96,14 +81,16 @@ bool ArmorialVisionUpdater::hasGeometryUpdates() const {
     return _newGeometryUpdates.tryAcquire();
 }
 
+//************************Começo dos métodos abstratos de Entity*********************
+
 void ArmorialVisionUpdater::initialization() {
 
     // WRBackbone connect (as Sensor)
     _sensor->connect("127.0.0.1", 0);
     if(_sensor->isConnected())
-        cout << ">> Armorial: Connected to WRBackbone.\n";
+        cout << ">> ArmorialVision: Connected to WRBackbone.\n";
     else {
-        cout << ">> WREye: [ERROR] Cannot connect to WRBackbone.\n";
+        cout << ">> ArmorialVision: [ERROR] Cannot connect to WRBackbone.\n";
         this->stopRunning();
         return;
     }
@@ -112,11 +99,11 @@ void ArmorialVisionUpdater::initialization() {
     _sensor->addBall(0);
     _sensor->addTeam(0, "Warthog Robotics");
     _sensor->addTeam(1, "Opponent");
-    std::cout << ">> WREye: Teams #0 (yellow) and #1 (blue) created.\n";
-    for(int i=0; i<12; i++) {
+    std::cout << ">> ArmorialVision: Teams #0 (yellow) and #1 (blue) created.\n";
+    for(int i=0; i<MAX_ROBOTS; i++) {
         _sensor->addPlayer(0, i);
         _sensor->addPlayer(1, i);
-        std::cout << ">> WREye: Player #" << i << " created.\n";
+        std::cout << ">> ArmorialVision: Player #" << i << " created.\n";
     }
 
     // Debug config
@@ -208,8 +195,6 @@ QHash<int,std::pair<int,SSL_DetectionRobot> > ArmorialVisionUpdater::parseCamera
 
 void ArmorialVisionUpdater::processBalls(const QList<std::pair<int,SSL_DetectionBall> > &balls) {
 
-    // Reset multi object filtering
-    _multiFilterBall->reset();
 
     // Add objects to multi object filtering
     QList<std::pair<int,SSL_DetectionBall> >::const_iterator it;
@@ -242,114 +227,70 @@ void ArmorialVisionUpdater::processBalls(const QList<std::pair<int,SSL_Detection
         if(ball.has_confidence()==false)
             continue;
 
-        // Add to multi robot filtering
-        Position pos(ball.has_x()&&ball.has_y(), realX, realY, 0.0);
-        _multiFilterBall->addObject(camId, ball.confidence(), pos);
-    }
-
-    // Get return from multi object filtering
-    QList<MultiObject*> multiFiltered = _multiFilterBall->getFiltered();
-
-    // Update object
-    if(multiFiltered.empty())
-        _objBall->update(0.0, Position(false,0,0,0));
-    else {
-
-        // Update all list
-        for(int i=0; i<multiFiltered.size(); i++) {
-            MultiObject *object = multiFiltered.at(i);
-            _objBall->update(object->confidence(), object->position());
+        if(balls.size()>0){ // potencial gigante de erro aqui, verificar depois
+            Position *pos_aux = new Position(ball.has_x()&&ball.has_y(), realX, realY, 0.0);;
+            Angle *angle_aux = new Angle(true, 0);
+            robotsInfo->_ball.update(100, *pos_aux, *angle_aux);
         }
     }
 }
 
 void ArmorialVisionUpdater::processRobots(const QHash<int,std::pair<int,SSL_DetectionRobot> > &robots) {
 
-    // Start tracker for unkwnown id robots
-    _robotTracker.startAssociations();
+    bool visited[MAX_ROBOTS];
+    int qt_blueRobots = robots.size();
+    int qt_yellowRobots = detection.robots_yellow_size();
+    quint32 camera_id = detection.camera_id();
 
-    // Check both yellow and blue
-    for(int color=Colors::YELLOW; color<=Colors::BLUE; color++) {
-        QList<std::pair<int,SSL_DetectionRobot> > colorRobots = robots.values(color);
+    if(qt_blueRobots != 0) robotsInfo->_qt_blue=qt_blueRobots;
+    if(qt_yellowRobots != 0) robotsInfo->_qt_yellow=qt_yellowRobots;
 
-        // Check robots without id
-        for(int i=0; i<colorRobots.size(); i++) {
-            SSL_DetectionRobot &robot = colorRobots[i].second;
+    robotsInfo->_camera_id=camera_id;
 
-            if(robot.has_robot_id()==false) {
-                Position robotPos(true, robot.x()*MM2METER, robot.y()*MM2METER, 0.0);
-                robot.set_robot_id(_robotTracker.getId(robotPos, (Colors::Color)color));
-            }
+    memset(visited, false, sizeof(visited)); // clear visited robots
+
+    for(int x = 0; x < qt_blueRobots; x++){
+        quint32 id = detection.robots_blue(x).robot_id();
+
+        if(!(id < maxRobots)){
+            throw std::runtime_error("ID error, check setRobotsInfo");
         }
 
-        // Check all robot ids
-        for(unsigned id=0; id<MAX_ROBOTS; id++) {
+        Position *pos_aux = new Position(true, detection.robots_blue(x).x(), detection.robots_blue(x).y());
+        Angle *angle_aux = new Angle(true, detection.robots_blue(x).orientation());
 
-            // Reset multi object filtering
-            _multiFilterRobots.value(color).value(id)->reset();
+        robotsInfo->_blueRobots[id].setRobotId(id);
+        robotsInfo->_blueRobots[id].update(100, *pos_aux, *angle_aux);
 
-            // Run on colorRobots
-            QList<std::pair<int,SSL_DetectionRobot> >::iterator it;
-            for(it=colorRobots.begin(); it!=colorRobots.end(); it++) {
-                const int camId = it->first;
-                const SSL_DetectionRobot robot = it->second;
+        visited[id] = true; // mark as visited
+    }
 
-                // Discard robots with wrong id
-                if(robot.robot_id()!=id)
-                    continue;
-
-                float realX = robot.x()*MM2METER;
-                float realY = robot.y()*MM2METER;
-
-                // Field area limit
-                if(FieldAreas::hasArea(_fieldLimit, FieldAreas::Q1)==false) {
-                    if(realX>-0.10 && realY>-0.10)
-                        continue;
-                }
-                if(FieldAreas::hasArea(_fieldLimit, FieldAreas::Q2)==false) {
-                    if(realX<0.10 && realY>-0.10)
-                        continue;
-                }
-                if(FieldAreas::hasArea(_fieldLimit, FieldAreas::Q3)==false) {
-                    if(realX<0.10 && realY<0.10)
-                        continue;
-                }
-                if(FieldAreas::hasArea(_fieldLimit, FieldAreas::Q4)==false) {
-                    if(realX>-0.10 && realY<0.10)
-                        continue;
-                }
-
-                // Confidence
-                if(robot.has_confidence()==false)
-                    continue;
-
-                // Add to multi robot filtering
-                Position pos(robot.has_x()&&robot.has_y(), realX, realY, 0.0);
-                Angle ori(robot.has_orientation(), robot.orientation());
-                _multiFilterRobots.value(color).value(id)->addObject(camId, robot.confidence(), pos, ori);
-
-            }
-
-            // Get return from multi object filtering
-            QList<MultiObject*> multiFiltered = _multiFilterRobots.value(color).value(id)->getFiltered();
-
-            // Update object
-            if(multiFiltered.empty())
-                _objRobots.value(color).value(id)->update(0.0, Position(false,0,0,0), Angle(false,0));
-            else {
-
-                // Update all list
-                for(int i=0; i<multiFiltered.size(); i++) {
-                    MultiObject *object = multiFiltered.at(i);
-                    _objRobots.value(color).value(id)->update(object->confidence(), object->position(), object->orientation());
-                }
-            }
-
+    for(int x = 0; x < maxRobots && qt_blueRobots != 0; x++){
+        if(!visited[x] && !robotsInfo->_blueRobots[x].checkLoss()){
+            // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
+            robotsInfo->_blueRobots[x].predict();
         }
     }
 
-    // End tracker
-    _robotTracker.endAssociations();
+    for(int x = 0; x < qt_yellowRobots; x++){
+        quint32 id = detection.robots_yellow(x).robot_id();
+
+        if(!(id < maxRobots)){
+            throw std::runtime_error("ID error, check setRobotsInfo");
+        }
+        Position *pos_aux = new Position(true, detection.robots_yellow(x).x(), detection.robots_yellow(x).y());
+        Angle *angle_aux = new Angle(true, detection.robots_yellow(x).orientation());
+
+        robotsInfo->_yellowRobots[id].setRobotId(id);
+        robotsInfo->_yellowRobots[id].update(100, *pos_aux, *angle_aux);
+    }
+
+    for(int x = 0; x < maxRobots && qt_yellowRobots != 0; x++){
+        if(!visited[x] && !robotsInfo->_yellowRobots[x].checkLoss()){
+            // se nao tiver sido visitado pelo frame anterior mas ainda estiver rodando loss, da predict
+            robotsInfo->_yellowRobots[x].predict();
+        }
+    }
 }
 
 void ArmorialVisionUpdater::processGeometryData(const SSL_GeometryData &geometryData) {

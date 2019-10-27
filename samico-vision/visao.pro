@@ -45,6 +45,7 @@ SOURCES += \
     entity/entity.cpp \
     entity/armorialvisionupdater/armorialvisionupdater.cpp \
     utils/fieldareas.cpp \
+    entity/armorialvisionclient/armorialvisionclient.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -102,5 +103,7 @@ HEADERS += \
     entity/entity.h \
     entity/armorialvisionclient/armorialvisionclient.h \
     utils/fieldareas.h \
-    utils/color.h
+    utils/color.h \
+    entity/armorialvisionupdater/armorialvisionupdater.h \
+    entity/eyebase.hh
 

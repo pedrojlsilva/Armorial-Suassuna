@@ -19,6 +19,7 @@ public:
 
     Position getBallPosition();
     Velocity getBallVelocity();
+    void updateToSensor();
 
 
 };

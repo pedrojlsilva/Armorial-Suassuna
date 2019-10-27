@@ -4,9 +4,10 @@
 #include <QReadWriteLock>
 #include <QReadWriteLock>
 #include <GEARSystem/gearsystem.hh>
-#include "include/filters.h"
-#include "LossFilter/loss.h"
-#include "NoiseFilter/noise.h"
+#include <NoiseFilter/noise.h>
+#include <LossFilter/loss.h>
+#include <KalmanFilter/kalman.hpp>
+
 
 
 
@@ -29,22 +30,28 @@ private:
     KalmanFilter2D _kalmanFilter = KalmanFilter2D();
     Noise _noiseFilter = Noise();
     Loss _lossFilter = Loss();
+    Sensor *_sensor;
+    virtual void updateToSensor() = 0;
 
     // Brute velocity calc
 
     //ObjectVelocity _objVel;
 
-
+protected:
+    Sensor* sensor() { return _sensor; }
+    Position _position = Position();
+    Velocity _velocity =  Velocity();
+    Angle _orientation = Angle();
 
 public:
     Object(bool enableLossFilter, bool enableKalmanFilter, bool enableNoiseFilter);
     virtual ~Object();
     void update(double confidence, Position pos, Angle ori);
+    void setSensor(Sensor *sensor) { _sensor = sensor; }
+
 
     bool isValid;
-    Position _position = Position();
-    Velocity _velocity =  Velocity();
-    Angle _orientation = Angle();
+
     double getConfidence();
     Position getPosition();
     Velocity getVelocity();
@@ -57,6 +64,7 @@ public:
     void setUnknown();
     bool checkNoise();
     bool checkLoss();
+    double confidence();
 
 
 };

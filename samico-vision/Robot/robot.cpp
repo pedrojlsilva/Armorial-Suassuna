@@ -35,6 +35,20 @@ QString Robot::name() {
 
 
 
+void Robot::updateToSensor() {
+
+    sensor()->setPlayerPosition(_teamId, _robotId, _position);
+
+    sensor()->setPlayerVelocity(_teamId, _robotId, _velocity);
+
+    sensor()->setPlayerOrientation(_teamId, _robotId, _orientation);
+
+    if(_debugDetection)
+
+        std::cout << name().toStdString() << ", set at (" << ((_position.x()>0)?" ":"") << _position.x() << ", " << ((_position.y()>0)?" ":"") << _position.y() << "), velocity=" << _velocity.abs() << ", angle=" << GEARSystem::Angle::toDegrees(_orientation.value()) << ".\n";
+
+}
+
 Robot::~Robot() {
     _color = 0;
     _teamId = 0;
